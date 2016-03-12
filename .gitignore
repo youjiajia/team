@@ -1,3 +1,4 @@
 #忽略所有.pyc文件
 *.pyc
-/migrations/
+db.sqlite3
+migrations
