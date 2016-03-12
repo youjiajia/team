@@ -36,4 +36,4 @@ def bbs(req):
 #备忘录
 @csrf_exempt
 def memo(req):
-        return render_to_response('index.html')
+        return render_to_response('memor.html')
