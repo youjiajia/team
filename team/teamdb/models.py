@@ -5,7 +5,7 @@ from django.db import models
 
 #成员表
 class T_Member(models.Model):
-    UserID=models.CharField(max_length=50, verbose_name='成员账号（企业号内必须唯一）')
+    UserID=models.CharField(unique=True,max_length=50, verbose_name='成员账号（企业号内必须唯一）')
     MemberName=models.CharField(max_length=100, verbose_name='成员姓名')
     PictureUrl=models.CharField(max_length=200, verbose_name='头像图片路径')
     IsUsed=models.BooleanField(verbose_name='该账号是否被删除')
