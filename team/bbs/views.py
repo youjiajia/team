@@ -74,7 +74,7 @@ class MemoTemplateView(TemplateView):
     def get_context_data(self, **kwargs):
         context = super(MemoTemplateView, self).get_context_data(**kwargs)
         if self.request.COOKIES.get('userid','')=='':
-            getuserid(self.request)
+            self.getuserid(self.request)
             if cookieuserid!='':
                 if T_Member.objects.filter(UserID=cookieuserid,IsUsed=True).count()==0:
                     T_Member.objects.create(UserID=cookieuserid,IsUsed=True)
