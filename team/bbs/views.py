@@ -65,7 +65,7 @@ class MemoTemplateView(TemplateView):
             if jsonreturn.has_key('UserId'):
                 if T_Member.objects.filter(UserID=jsonreturn['UserId'],IsUsed=True).count()==0:
                     T_Member.objects.create(UserID=jsonreturn['UserId'],IsUsed=True)
-                print 1234
+                print '1234'
                 response.set_cookie('userid',jsonreturn['UserId'])
         return response
     def get_context_data(self, **kwargs):
@@ -79,10 +79,8 @@ class MemoTemplateView(TemplateView):
             the_page = urlresponse.read()
             jsonreturn=json.loads(the_page)
             if jsonreturn.has_key('UserId'):
-                print jsonreturn['UserId']
                 if T_Member.objects.filter(UserID=jsonreturn['UserId'],IsUsed=True).count()==0:
                     T_Member.objects.create(UserID=jsonreturn['UserId'],IsUsed=True)
-                print jsonreturn
                 context['memo']=T_Memo.objects.filter(MemberId=T_Member.objects.get(UserID=jsonreturn['UserId'])).order_by('-CreateTime')
                 return context
         else:
