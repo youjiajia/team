@@ -31,7 +31,7 @@ def people(req):
     return render_to_response('index.html')
 #项目管理
 def project(req):
-    return render_to_response('index.html')
+    return HttpResponse(req.COOKIES.get('userid'))
 
 #畅言论坛
 def bbs(req):
@@ -40,8 +40,8 @@ def bbs(req):
         access_token=getToken(sCorpSecret)
         code=req.GET.get('code')
         req = urllib2.Request('https://qyapi.weixin.qq.com/cgi-bin/user/getuserinfo?access_token='+access_token+'&code='+code)
-        response = urllib2.urlopen(req)
-        the_page = response.read()
+        urlresponse = urllib2.urlopen(req)
+        the_page = urlresponse.read()
         jsonreturn=json.loads(the_page)
         if jsonreturn.has_key('UserId'):
             response.set_cookie('userid',jsonreturn['UserId'])
