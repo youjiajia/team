@@ -61,11 +61,10 @@ class MemoTemplateView(TemplateView):
             urlresponse = urllib2.urlopen(urlreq)
             the_page = urlresponse.read()
             jsonreturn=json.loads(the_page)
-            print jsonreturn
             if jsonreturn.has_key('UserId'):
                 if T_Member.objects.filter(UserID=jsonreturn['UserId'],IsUsed=True).count()==0:
                     T_Member.objects.create(UserID=jsonreturn['UserId'],IsUsed=True)
-                self.response_class.set_cookie('userid',jsonreturn['UserId'])
+                response.set_cookie('userid',jsonreturn['UserId'])
         return response
 
     def get_context_data(self, **kwargs):
