@@ -4,7 +4,6 @@ from django.shortcuts import render
 from django.shortcuts import render_to_response
 from django.http import HttpResponse,HttpResponseRedirect
 from datetime import datetime
-from django.views.decorators.csrf import csrf_exempt
 from public.models import WXBizMsgCrypt
 import xml.etree.cElementTree as ET
 import json
@@ -22,14 +21,12 @@ sEncodingAESKey = tree.find("sEncodingAESKey").text
 sCorpID = tree.find("sCorpID").text
 sCorpSecret = tree.find("sCorpSecret").text
 #获取access_token函数
-@csrf_exempt
 def getToken(CorpSecret):
 	req = urllib2.Request('https://qyapi.weixin.qq.com/cgi-bin/gettoken?corpid='+sCorpID+'&corpsecret='+CorpSecret)
 	response = urllib2.urlopen(req)
 	the_page = response.read()
 	return json.loads(the_page)['access_token']
 # 首次验证视图
-@csrf_exempt
 def index(req):
 	wxcpt=WXBizMsgCrypt(sToken,sEncodingAESKey,sCorpID)
 	ret,sEchoStr=wxcpt.VerifyURL(req.GET["msg_signature"], req.GET["timestamp"],req.GET["nonce"],req.GET["echostr"])
