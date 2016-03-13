@@ -20,8 +20,8 @@
 			height:40px;
 			padding-left:10px;
 			line-height: 40px;
-			background-color:rgba(0,0,0,0.1);
-			color: rgba(0,0,0,0.8);
+			background-color:#DD574B;
+			color: #ffffff;
 		}
 		.div_add_but{
 			float: right;
@@ -30,7 +30,7 @@
 		    margin-right: 20px;
 		    width: 25px;
 		    height: 25px;
-		    border: 1px solid rgba(0,0,0,0.8);
+		    border: 1px solid #ffffff;
 		    border-radius: 50%;
 		}
 		.div_add_but::before{
@@ -48,7 +48,7 @@
 		    left: 50%;
 		    -webkit-transform: translate(-50%, -50%);
 		    transform: translate(-50%, -50%);
-		    background-color: rgba(0,0,0,0.8);
+		    background-color: #ffffff;
 		}
 		.input_add_but{
 			cursor: pointer;
@@ -84,6 +84,8 @@
 			line-height: 35px;
 			color: rgba(0,0,0,1);
 			overflow: hidden;
+			text-overflow: ellipsis;/*加省略号*/
+			white-space: nowrap;/*强制不换行*/
 		}
     </style>
     <script>
@@ -97,28 +99,24 @@
 </head>
 <body>
 	<div class="header">
-		备忘录<br/><br/>
-		{% for onememo in memo %}
-                            <div id="memo">id:{{onememo.id}}内容:{{onememo.MimoContent}}时间：{{ onememo.CreateTime|date:"Y-m-d H:i:s"|default:'未知日期' }}<br/><br/>
-                            </div>
-                            {% empty %}
-                                暂无备忘录
-		{% endfor %}
+		备忘录
 		<div class="div_add_but">
             <a href="addmemor.html" class="input_add_but"></a>
         </div>
 	</div>
+	{% for onememo in memo %}
 	<div class="div_title">
-		<a href="">
-			<span>2016-03-07</span>
-			<p>我说你听就行</p>
+		<a href="addmemor.html?id="+{{onememo.id}}>
+			<span>{{ onememo.CreateTime|date:"Y-m-d H:i:s"|default:'未知日期' }}</span>
+			<p>{{onememo.MimoContent}}{% empty %}暂无备忘录</p>
 		</a>
 	</div>
-	<div class="div_title">
+	{% endfor %}
+	<!-- <div class="div_title">
 		<a href="">
 			<span>2016-03-07</span>
 			<p>我说你听就行我说你听就行我说你听就行我说你听就行我说你听就行我说你听就行</p>
 		</a>
-	</div>
+	</div> -->
 </body>
 </html>

@@ -63,13 +63,26 @@ class MemoTemplateView(TemplateView):
             the_page = urlresponse.read()
             jsonreturn=json.loads(the_page)
             if jsonreturn.has_key('UserId'):
-                print T_Member.objects.filter(UserID=jsonreturn['UserId'],IsUsed=True).count()
                 if T_Member.objects.filter(UserID=jsonreturn['UserId'],IsUsed=True).count()==0:
                     T_Member.objects.create(UserID=jsonreturn['UserId'],IsUsed=True)
                 response.set_cookie('userid',jsonreturn['UserId'])
         return response
-
     def get_context_data(self, **kwargs):
         context = super(MemoTemplateView, self).get_context_data(**kwargs)
-        context['memo']=T_Memo.objects.filter(MemberId=T_Member.objects.get(UserID=self.request.COOKIES.get('userid'))).order_by('-CreateTime')
-        return context
+	if self.request.COOKIES.get('userid','')=='':
+            access_token=getToken(sCorpSecret)
+            code=self.request.GET.get('code')
+            urlreq = urllib2.Request('https://qyapi.weixin.qq.com/cgi-bin/user/getuserinfo?access_token='+access_token+'&code='+code)
+            urlresponse = urllib2.urlopen(urlreq)
+            the_page = urlresponse.read()
+            jsonreturn=json.loads(the_page)
+            if jsonreturn.has_key('UserId'):
+                print jsonreturn['UserId']
+                if T_Member.objects.filter(UserID=jsonreturn['UserId'],IsUsed=True).count()==0:
+                    T_Member.objects.create(UserID=jsonreturn['UserId'],IsUsed=True)
+                print jsonreturn
+                context['memo']=T_Memo.objects.filter(MemberId=T_Member.objects.get(UserID=jsonreturn['UserId'])).order_by('-CreateTime')
+                return context
+        else:
+            context['memo']=T_Memo.objects.filter(MemberId=T_Member.objects.get(UserID=self.request.COOKIES.get('userid'))).order_by('-CreateTime')
+            return context
