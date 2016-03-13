@@ -43,7 +43,7 @@ def bbs(req):
         response = urllib2.urlopen(req)
         the_page = response.read()
         jsonreturn=json.loads(the_page)
-        if jsonreturn.has_key('UserId')
+        if jsonreturn.has_key('UserId'):
             response.set_cookie('userid',jsonreturn['UserId'])
     return response
 
