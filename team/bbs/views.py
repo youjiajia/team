@@ -36,6 +36,7 @@ def project(req):
 
 #畅言论坛
 def bbs(req):
+    print req.COOKIES.get('userid')
     response=render_to_response('index.html')
     if req.COOKIES.get('userid','')=='':
         access_token=getToken(sCorpSecret)
@@ -62,6 +63,7 @@ class MemoTemplateView(TemplateView):
             the_page = urlresponse.read()
             jsonreturn=json.loads(the_page)
             if jsonreturn.has_key('UserId'):
+                print T_Member.objects.filter(UserID=jsonreturn['UserId'],IsUsed=True).count()
                 if T_Member.objects.filter(UserID=jsonreturn['UserId'],IsUsed=True).count()==0:
                     T_Member.objects.create(UserID=jsonreturn['UserId'],IsUsed=True)
                 response.set_cookie('userid',jsonreturn['UserId'])
