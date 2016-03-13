@@ -3,7 +3,7 @@
 from django.db import models
 from public.views import getToken
 import xml.etree.cElementTree as ET
-import urllib2,os
+import urllib2,os,json
 basePath=os.path.dirname(os.path.dirname(__file__))
 logPath=os.path.join(basePath,"log/indexviewError.txt")
 informationStateXml=os.path.join(basePath,"webStatic/xml/weiConfig.xml")
