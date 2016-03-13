@@ -69,7 +69,7 @@ class MemoTemplateView(TemplateView):
         return response
     def get_context_data(self, **kwargs):
         context = super(MemoTemplateView, self).get_context_data(**kwargs)
-	if self.request.COOKIES.get('userid','')=='':
+        if self.request.COOKIES.get('userid','')=='':
             access_token=getToken(sCorpSecret)
             code=self.request.GET.get('code')
             urlreq = urllib2.Request('https://qyapi.weixin.qq.com/cgi-bin/user/getuserinfo?access_token='+access_token+'&code='+code)
