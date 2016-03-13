@@ -22,4 +22,7 @@ urlpatterns = [
       url(r'^bbs/$',bbs),
         #备忘录
       url(r'^memo/$',MemoTemplateView.as_view(), name='memoindex'),
+      url(r'^addmemo/$',addmemo),
+      url(r'^memodetail/$',memodetail),
+      url(r'^deletememo/$',deletememo),
 ]

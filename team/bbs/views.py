@@ -86,3 +86,28 @@ class MemoTemplateView(TemplateView):
         else:
             context['memo']=T_Memo.objects.filter(MemberId=T_Member.objects.get(UserID=self.request.COOKIES.get('userid'))).order_by('-CreateTime')
             return context
+def addmemo(req):
+    if req.method=='GET':
+        return render_to_response('memo/addmemor.html')
+    elif req.method=='POST':
+        if req.COOKIES.get('userid','')!='':
+            T_Memo.objects.create(MemberId=req.COOKIES.get('userid'),MimoContent=req.POST.get('content'))
+            return HttpResponse('1')
+        else:
+            return HttpResponse('0')
+def memodetail(req):
+    if req.method=='GET':
+        if req.GET.get('id','')!='':
+            memo=T_Memo.objects.get(id=req.GET.get('id'))
+            return render_to_response('memo/memordetail.html',{'memo':memo})
+    elif req.method=='POST':
+        if req.COOKIES.get('userid','')!='' & req.POST.get('content','')!='':
+            T_Memo.objects.get(id=req.POST.get('id')).update(MimoContent=req.POST.get('content'))
+            return HttpResponse('1')
+        else:
+            return HttpResponse('0')
+def deletememo(req):
+    if req.GET.get('id','')!='':
+        T_Memo.objects.get(id=req.GET.get('id')).delete()
+        return HttpResponse('1')
+    return HttpResponse('0')
