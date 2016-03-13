@@ -65,7 +65,6 @@ class MemoTemplateView(TemplateView):
     def dispatch(self, request, *args, **kwargs):
         response=super(MemoTemplateView, self).dispatch(request, *args, **kwargs)
         if request.COOKIES.get('userid','')=='':
-            print self.cookieuserid
             if self.cookieuserid!='':
                 if T_Member.objects.filter(UserID=self.cookieuserid,IsUsed=True).count()==0:
                     T_Member.objects.create(UserID=self.cookieuserid,IsUsed=True)
