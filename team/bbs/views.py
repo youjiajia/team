@@ -28,15 +28,25 @@ sCorpSecret = tree.find("sCorpSecret").text
 
 #平台管理
 def people(req):
-    return HttpResponseRedirect('https://open.weixin.qq.com/connect/oauth2/authorize?appid='+sCorpID+'&redirect_uri='+'/bbs/'+'&response_type=code&scope=snsapi_base&state=ok#wechat_redirect')
+    return render_to_response('index.html')
 #项目管理
 def project(req):
     return render_to_response('index.html')
 
 #畅言论坛
 def bbs(req):
-    access_token=getToken(sCorpSecret)
-    return render_to_response('index.html')
+    response=render_to_response('index.html')
+    if req.COOKIES.get('userid','')=='':
+        access_token=getToken(sCorpSecret)
+        code=req.GET.get('code')
+        req = urllib2.Request('https://qyapi.weixin.qq.com/cgi-bin/user/getuserinfo?access_token='+access_token+'&code='+code)
+        response = urllib2.urlopen(req)
+        the_page = response.read()
+        jsonreturn=json.loads(the_page)
+        if jsonreturn.has_key('UserId')
+            response.set_cookie('userid',jsonreturn['UserId'])
+    return response
+
 
 #备忘录
 class MemoTemplateView(TemplateView):
