@@ -61,24 +61,24 @@ class MemoTemplateView(TemplateView):
         the_page = urlresponse.read()
         jsonreturn=json.loads(the_page)
         if jsonreturn.has_key('UserId'):
-            cookieuserid=jsonreturn['UserId']
+            self.cookieuserid=jsonreturn['UserId']
     def dispatch(self, request, *args, **kwargs):
         response=super(MemoTemplateView, self).dispatch(request, *args, **kwargs)
         if request.COOKIES.get('userid','')=='':
-            print cookieuserid
-            if cookieuserid!='':
-                if T_Member.objects.filter(UserID=cookieuserid,IsUsed=True).count()==0:
-                    T_Member.objects.create(UserID=cookieuserid,IsUsed=True)
-                response.set_cookie('userid',cookieuserid)
+            print self.cookieuserid
+            if self.cookieuserid!='':
+                if T_Member.objects.filter(UserID=self.cookieuserid,IsUsed=True).count()==0:
+                    T_Member.objects.create(UserID=self.cookieuserid,IsUsed=True)
+                response.set_cookie('userid',self.cookieuserid)
         return response
     def get_context_data(self, **kwargs):
         context = super(MemoTemplateView, self).get_context_data(**kwargs)
         if self.request.COOKIES.get('userid','')=='':
             self.getuserid(self.request)
-            if cookieuserid!='':
-                if T_Member.objects.filter(UserID=cookieuserid,IsUsed=True).count()==0:
-                    T_Member.objects.create(UserID=cookieuserid,IsUsed=True)
-                context['memo']=T_Memo.objects.filter(MemberId=T_Member.objects.get(UserID=cookieuserid)).order_by('-CreateTime')
+            if self.cookieuserid!='':
+                if T_Member.objects.filter(UserID=self.cookieuserid,IsUsed=True).count()==0:
+                    T_Member.objects.create(UserID=self.cookieuserid,IsUsed=True)
+                context['memo']=T_Memo.objects.filter(MemberId=T_Member.objects.get(UserID=self.cookieuserid)).order_by('-CreateTime')
                 return context
         else:
             context['memo']=T_Memo.objects.filter(MemberId=T_Member.objects.get(UserID=self.request.COOKIES.get('userid'))).order_by('-CreateTime')
