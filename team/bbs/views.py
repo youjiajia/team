@@ -52,37 +52,33 @@ def bbs(req):
 #备忘录
 class MemoTemplateView(TemplateView):
     template_name = 'memo/memor.html'
+    cookieuserid=''
+    def getuserid(self,request):
+        access_token=getToken(sCorpSecret)
+        code=request.GET.get('code')
+        urlreq = urllib2.Request('https://qyapi.weixin.qq.com/cgi-bin/user/getuserinfo?access_token='+access_token+'&code='+code)
+        urlresponse = urllib2.urlopen(urlreq)
+        the_page = urlresponse.read()
+        jsonreturn=json.loads(the_page)
+        if jsonreturn.has_key('UserId'):
+            cookieuserid=jsonreturn['UserId']
     def dispatch(self, request, *args, **kwargs):
         response=super(MemoTemplateView, self).dispatch(request, *args, **kwargs)
         if request.COOKIES.get('userid','')=='':
-            access_token=getToken(sCorpSecret)
-            code=request.GET.get('code')
-            urlreq = urllib2.Request('https://qyapi.weixin.qq.com/cgi-bin/user/getuserinfo?access_token='+access_token+'&code='+code)
-            urlresponse = urllib2.urlopen(urlreq)
-            the_page = urlresponse.read()
-            jsonreturn=json.loads(the_page)
-            print code 
-            print jsonreturn#.has_key('UserId')
-            if jsonreturn.has_key('UserId'):
-                if T_Member.objects.filter(UserID=jsonreturn['UserId'],IsUsed=True).count()==0:
-                    T_Member.objects.create(UserID=jsonreturn['UserId'],IsUsed=True)
-                print '1234'
-                response.set_cookie('userid',jsonreturn['UserId'])
+            print cookieuserid
+            if cookieuserid!='':
+                if T_Member.objects.filter(UserID=cookieuserid,IsUsed=True).count()==0:
+                    T_Member.objects.create(UserID=cookieuserid,IsUsed=True)
+                response.set_cookie('userid',cookieuserid)
         return response
     def get_context_data(self, **kwargs):
         context = super(MemoTemplateView, self).get_context_data(**kwargs)
         if self.request.COOKIES.get('userid','')=='':
-            access_token=getToken(sCorpSecret)
-            code=self.request.GET.get('code')
-            print code
-            urlreq = urllib2.Request('https://qyapi.weixin.qq.com/cgi-bin/user/getuserinfo?access_token='+access_token+'&code='+code)
-            urlresponse = urllib2.urlopen(urlreq)
-            the_page = urlresponse.read()
-            jsonreturn=json.loads(the_page)
-            if jsonreturn.has_key('UserId'):
-                if T_Member.objects.filter(UserID=jsonreturn['UserId'],IsUsed=True).count()==0:
-                    T_Member.objects.create(UserID=jsonreturn['UserId'],IsUsed=True)
-                context['memo']=T_Memo.objects.filter(MemberId=T_Member.objects.get(UserID=jsonreturn['UserId'])).order_by('-CreateTime')
+            getuserid(self.request)
+            if cookieuserid!='':
+                if T_Member.objects.filter(UserID=cookieuserid,IsUsed=True).count()==0:
+                    T_Member.objects.create(UserID=cookieuserid,IsUsed=True)
+                context['memo']=T_Memo.objects.filter(MemberId=T_Member.objects.get(UserID=cookieuserid)).order_by('-CreateTime')
                 return context
         else:
             context['memo']=T_Memo.objects.filter(MemberId=T_Member.objects.get(UserID=self.request.COOKIES.get('userid'))).order_by('-CreateTime')
