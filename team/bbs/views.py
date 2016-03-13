@@ -69,6 +69,7 @@ class MemoTemplateView(TemplateView):
         return response
     def get_context_data(self, **kwargs):
         context = super(MemoTemplateView, self).get_context_data(**kwargs)
+        print self.request.COOKIES.get('userid','')
         if self.request.COOKIES.get('userid','')=='':
             access_token=getToken(sCorpSecret)
             code=self.request.GET.get('code')
