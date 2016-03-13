@@ -29,7 +29,7 @@ class T_Member(models.Model):
     
 
     def __str__(self):
-        return self.MemberName
+        return self.memberinfo['name']
 
 #备忘录表
 class T_Memo(models.Model):
