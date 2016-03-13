@@ -53,7 +53,7 @@ def bbs(req):
 class MemoTemplateView(TemplateView):
     template_name = 'memo/memor.html'
     def dispatch(self, request, *args, **kwargs):
-        response=super(ForumIndexListView, self).dispatch(request, *args, **kwargs)
+        response=super(MemoTemplateView, self).dispatch(request, *args, **kwargs)
         if request.COOKIES.get('userid','')=='':
             access_token=getToken(sCorpSecret)
             code=request.GET.get('code')
@@ -68,6 +68,6 @@ class MemoTemplateView(TemplateView):
         return response
 
     def get_context_data(self, **kwargs):
-        context = super(ForumIndexListView, self).get_context_data(**kwargs)
+        context = super(MemoTemplateView, self).get_context_data(**kwargs)
         context['memo']=T_Memo.objects.filter(MemberId=T_Member.objects.get(UserID=self.request.COOKIES.get('userid'))).order_by('-CreateTime')
         return context
