@@ -21,5 +21,5 @@ urlpatterns = [
         #畅言论坛
       url(r'^bbs/$',bbs),
         #备忘录
-      # url(r'^memo/$',memo),
+      url(r'^memo/$',memo),
 ]
