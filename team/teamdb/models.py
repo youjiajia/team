@@ -1,15 +1,32 @@
 # -*- coding: utf-8 -*-
 #coding=utf-8
 from django.db import models
-
+from public.views import getToken
+import xml.etree.cElementTree as ET
+import urllib2,os
+basePath=os.path.dirname(os.path.dirname(__file__))
+logPath=os.path.join(basePath,"log/indexviewError.txt")
+informationStateXml=os.path.join(basePath,"webStatic/xml/weiConfig.xml")
+tree = ET.ElementTree(file=informationStateXml)
+sToken = tree.find("sToken").text
+sEncodingAESKey = tree.find("sEncodingAESKey").text
+sCorpID = tree.find("sCorpID").text
+sCorpSecret = tree.find("sCorpSecret").text
 
 #成员表
 class T_Member(models.Model):
     UserID=models.CharField(unique=True,max_length=50, verbose_name='成员账号（企业号内必须唯一）')
-    MemberName=models.CharField(max_length=100, verbose_name='成员姓名')
-    PictureUrl=models.CharField(max_length=200, verbose_name='头像图片路径')
-    IsUsed=models.BooleanField(verbose_name='该账号是否被删除')
-    IsSuAdmin=models.BooleanField(verbose_name='是否为超级管理员')
+    IsUsed=models.BooleanField(verbose_name='该账号是否使用')
+    IsSuAdmin=models.BooleanField(verbose_name='是否为超级管理员',default=False)
+
+    @property
+    def memberinfo(self):
+        userinfo = urllib2.Request('https://qyapi.weixin.qq.com/cgi-bin/user/get?access_token='+getToken(sCorpSecret)+'&userid='+self.UserID)
+        userinforeponse = urllib2.urlopen(userinfo)
+        userinformation = userinforeponse.read()
+        jsonuserinfo=json.loads(userinformation)
+        return jsonuserinfo
+    
 
     def __str__(self):
         return self.MemberName

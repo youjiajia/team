@@ -16,6 +16,7 @@ from django.http import HttpResponseRedirect
 from django.views.generic import ListView, TemplateView
 import xml.etree.cElementTree as ET
 from public.views import getToken
+from teamdb.models import *
 # Create your views here.
 basePath=os.path.dirname(os.path.dirname(__file__))
 logPath=os.path.join(basePath,"log/indexviewError.txt")
@@ -39,8 +40,8 @@ def bbs(req):
     if req.COOKIES.get('userid','')=='':
         access_token=getToken(sCorpSecret)
         code=req.GET.get('code')
-        req = urllib2.Request('https://qyapi.weixin.qq.com/cgi-bin/user/getuserinfo?access_token='+access_token+'&code='+code)
-        urlresponse = urllib2.urlopen(req)
+        urlreq = urllib2.Request('https://qyapi.weixin.qq.com/cgi-bin/user/getuserinfo?access_token='+access_token+'&code='+code)
+        urlresponse = urllib2.urlopen(urlreq)
         the_page = urlresponse.read()
         jsonreturn=json.loads(the_page)
         if jsonreturn.has_key('UserId'):
@@ -52,35 +53,21 @@ def bbs(req):
 class MemoTemplateView(TemplateView):
     template_name = 'memo/memor.html'
     def dispatch(self, request, *args, **kwargs):
-        if self.request.user.is_authenticated():
-            return super(ForumIndexListView, self).dispatch(request, *args, **kwargs)
-        else:
-            return HttpResponseRedirect("/normal/login/")
+        response=super(ForumIndexListView, self).dispatch(request, *args, **kwargs)
+        if request.COOKIES.get('userid','')=='':
+            access_token=getToken(sCorpSecret)
+            code=request.GET.get('code')
+            urlreq = urllib2.Request('https://qyapi.weixin.qq.com/cgi-bin/user/getuserinfo?access_token='+access_token+'&code='+code)
+            urlresponse = urllib2.urlopen(urlreq)
+            the_page = urlresponse.read()
+            jsonreturn=json.loads(the_page)
+            if jsonreturn.has_key('UserId'):
+                if T_Member.objects.filter(UserID=jsonreturn['UserId'],IsUsed=True).count()==0:
+                    T_Member.objects.create(UserID=jsonreturn['UserId'],IsUsed=True)
+                self.response_class.set_cookie('userid',jsonreturn['UserId'])
+        return response
 
     def get_context_data(self, **kwargs):
         context = super(ForumIndexListView, self).get_context_data(**kwargs)
-        user = self.request.user
-        setattr(user,"focusnum",user.userforum.userfocus.count())
-        setattr(user,"fans",user.befocus_user.count())
-        setattr(user,"signin",'true' if user.userforum.lastsigned_time == date.today() else 'false')
-        context['user'] = user
-        context['weekday'] = date.weekday(date.today())+1
-        context['modules'] = ForumModule.objects.all()
-        hottitles=ForumTitle.objects.order_by('-replynum')[:4]
-        newtitles = ForumTitle.objects.order_by(
-            "-title_createtime")[:7]
-        for hottitle in hottitles:
-            recentlyusers=hottitle.title_reply.order_by("reply_createtime")
-            if recentlyusers.count()>0:
-                setattr(hottitle,"replycontent",recentlyusers[0].replycontent)
-            else:
-                setattr(hottitle,"replycontent","0")
-        context['hottitles']=hottitles
-        for newtitle in newtitles:
-            recentlyusers=newtitle.title_reply.order_by("-reply_createtime")
-            if recentlyusers.count()>0:
-                setattr(newtitle,"recentlyuser",recentlyusers[0].replyuser.username)
-            else:
-                setattr(newtitle,"recentlyuser","0")
-        context['newtitles']=newtitles
+        context['memo']=T_Memo.objects.filter(MemberId=T_Member.objects.get(UserID=self.request.COOKIES.get('userid'))).order_by('-CreateTime')
         return context

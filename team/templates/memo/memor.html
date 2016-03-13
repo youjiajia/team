@@ -97,7 +97,13 @@
 </head>
 <body>
 	<div class="header">
-		备忘录
+		备忘录<br/><br/>
+		{% for onememo in memo %}
+                            <div id="memo">id:{{onememo.id}}内容:{{onememo.MimoContent}}时间：{{ onememo.CreateTime|date:"Y-m-d H:i:s"|default:'未知日期' }}<br/><br/>
+                            </div>
+                            {% empty %}
+                                暂无备忘录
+		{% endfor %}
 		<div class="div_add_but">
             <a href="addmemor.html" class="input_add_but"></a>
         </div>
