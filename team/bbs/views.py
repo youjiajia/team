@@ -61,6 +61,7 @@ class MemoTemplateView(TemplateView):
             urlresponse = urllib2.urlopen(urlreq)
             the_page = urlresponse.read()
             jsonreturn=json.loads(the_page)
+            print code 
             print jsonreturn#.has_key('UserId')
             if jsonreturn.has_key('UserId'):
                 if T_Member.objects.filter(UserID=jsonreturn['UserId'],IsUsed=True).count()==0:
@@ -73,6 +74,7 @@ class MemoTemplateView(TemplateView):
         if self.request.COOKIES.get('userid','')=='':
             access_token=getToken(sCorpSecret)
             code=self.request.GET.get('code')
+            print code
             urlreq = urllib2.Request('https://qyapi.weixin.qq.com/cgi-bin/user/getuserinfo?access_token='+access_token+'&code='+code)
             urlresponse = urllib2.urlopen(urlreq)
             the_page = urlresponse.read()
