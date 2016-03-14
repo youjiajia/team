@@ -138,5 +138,5 @@ def projectindex(req):
         projects=T_Project.objects.filter(Department_ID__in=list)
         return render_to_response('project/projectlist.html',{"level":"admin","projects":projects})
     else:
-        projects=T_Project.objects.filter(MemberId=member)
+        projects=member.t_projectmember.ProjectId
         return render_to_response('project/projectlist.html',{"level":"member","projects":projects})
