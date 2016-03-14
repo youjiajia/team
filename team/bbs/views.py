@@ -131,6 +131,7 @@ def project(req):
 
 def projectindex(req):
     member=T_Member.objects.get(UserID=req.COOKIES.get('userid'))
+    print T_Admin.objects.filter(MemberId=member).count
     if T_Admin.objects.filter(MemberId=member).count!=0:
         list=[]
         for admin in T_Admin.objects.filter(MemberId=member):
