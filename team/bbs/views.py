@@ -130,7 +130,14 @@ def project(req):
             response.set_cookie('userid',jsonreturn['UserId'])
     return response
 
-# def projectindex(req):
-#     response=render_to_response('project/projectlist.html')
-#     member=T_Member.objects.get(UserID=req.COOKIES.get('userid'))
-#     if T_Admin.objects.filter(MemberId=member).count!=0:
+def projectindex(req):
+    member=T_Member.objects.get(UserID=req.COOKIES.get('userid'))
+    if T_Admin.objects.filter(MemberId=member).count!=0:
+        list=[]
+        for admin in T_Admin.objects.filter(MemberId=member):
+            list.append(admin.Department_ID)
+        projects=T_Project.objects.filter(Department_ID__in=list)
+        return render_to_response('project/projectlist.html',{"level":"admin","projects":projects})
+    else:
+        projects=T_ProjectMember.objects.filter(MemberId=member)
+        return render_to_response('project/projectlist.html',{"level":"member","projects":projects})
