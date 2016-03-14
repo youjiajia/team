@@ -124,10 +124,12 @@ def project(req):
         the_page = urlresponse.read()
         jsonreturn=json.loads(the_page)
         if jsonreturn.has_key('UserId'):
-            if T_Member.objects.filter(UserID=self.cookieuserid,IsUsed=True).count()==0:
-                    T_Member.objects.create(UserID=self.cookieuserid,IsUsed=True)
+            if T_Member.objects.filter(UserID=req.cookieuserid,IsUsed=True).count()==0:
+                    T_Member.objects.create(UserID=req.cookieuserid,IsUsed=True)
             response.set_cookie('userid',jsonreturn['UserId'])
     return response
 
-#def projectindex(req):
-    
+# def projectindex(req):
+#     response=render_to_response('project/projectlist.html')
+#     member=T_Member.objects.get(UserID=req.COOKIES.get('userid'))
+#     if T_Admin.objects.filter(MemberId=member).count!=0:
