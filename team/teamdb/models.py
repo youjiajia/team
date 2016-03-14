@@ -66,7 +66,7 @@ class T_Admin(models.Model):
     Department_ID=models.CharField(max_length=50, verbose_name='部门id')
 
     def __str__(self):
-        return self.MemberId.MemberName
+        return self.MemberId.memberinfo['name']
 
 #投票表
 class T_Vote(models.Model):
@@ -108,7 +108,7 @@ class T_ProjectMember(models.Model):
     isHead=models.BooleanField(verbose_name='是否为项目负责人')
 
     def __str__(self):
-        return self.MemberId.MemberName
+        return self.MemberId.memberinfo['name']
 
 #文档表
 class T_Document(models.Model):
@@ -181,7 +181,7 @@ class T_DemandAssigned(models.Model):
     DemandId=models.ForeignKey(T_Demand,blank=True,null=True, verbose_name='需求id')
 
     def __str__(self):
-        return self.ProjectMemberId.MemberId.MemberName
+        return self.ProjectMemberId.MemberId.memberinfo['name']
 
 #日志表
 class T_Log(models.Model):
