@@ -30,9 +30,7 @@ sCorpSecret = tree.find("sCorpSecret").text
 #平台管理
 def people(req):
     return render_to_response('index.html')
-#项目管理
-def project(req):
-    return HttpResponse(req.COOKIES.get('userid'))
+
 
 #畅言论坛
 def bbs(req):
@@ -82,6 +80,7 @@ class MemoTemplateView(TemplateView):
         else:
             context['memo']=T_Memo.objects.filter(MemberId=T_Member.objects.get(UserID=self.request.COOKIES.get('userid'))).order_by('-CreateTime')
             return context
+#添加备忘录
 def addmemo(req):
     if req.method=='GET':
         return render_to_response('memo/addmemor.html')
@@ -91,6 +90,7 @@ def addmemo(req):
             return HttpResponse('1')
         else:
             return HttpResponse('0')
+#查看备忘录
 def memodetail(req):
     if req.method=='GET':
         if req.GET.get('id','')!='':
@@ -104,8 +104,28 @@ def memodetail(req):
             return HttpResponse('1')
         else:
             return HttpResponse('0')
+#删除备忘录
 def deletememo(req):
     if req.GET.get('id','')!='':
         T_Memo.objects.get(id=req.GET.get('id')).delete()
         return HttpResponse('1')
     return HttpResponse('0')
+
+#项目管理
+def project(req):
+    response=render_to_response('project/promanage.html')
+    if req.COOKIES.get('userid','')=='':
+        access_token=getToken(sCorpSecret)
+        code=req.GET.get('code')
+        urlreq = urllib2.Request('https://qyapi.weixin.qq.com/cgi-bin/user/getuserinfo?access_token='+access_token+'&code='+code)
+        urlresponse = urllib2.urlopen(urlreq)
+        the_page = urlresponse.read()
+        jsonreturn=json.loads(the_page)
+        if jsonreturn.has_key('UserId'):
+            if T_Member.objects.filter(UserID=self.cookieuserid,IsUsed=True).count()==0:
+                    T_Member.objects.create(UserID=self.cookieuserid,IsUsed=True)
+            response.set_cookie('userid',jsonreturn['UserId'])
+    return response
+
+def projectindex(req):
+    
