@@ -58,6 +58,7 @@
         <div class="weui_cell">
             <div class="weui_cell_bd weui_cell_primary">
                 <textarea style="background-image: url(/webStatic/image/1.jpg);line-height: 40px;" class="weui_textarea" id="memor_content" placeholder="输入文字" rows="12">{{memo.MimoContent}}</textarea>
+                <input type="hidden" id="hidden_id" value="{{memo.id}}">
             </div>
         </div>
     </div>
@@ -65,11 +66,12 @@
     <script>
     	function postMenor(){
     		var content=$("#memor_content").val();
+    		var id=$("#hidden_id").val();
     		alert(content);
     		$.ajax({
     			url:"/memodetail/",
     			type:"post",
-    			data:{content:content},
+    			data:{id:id,content:content},
     			success:function(data){
     				if(data==1){
     					location.href="/memo/";
