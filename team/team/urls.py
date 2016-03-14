@@ -17,7 +17,7 @@ urlpatterns = [
         #平台管理
       url(r'^people/$',people),
         #项目管理
-      url(r'^project/$',project),projectindex,
+      url(r'^project/$',project),
       url(r'^projectindex/$',projectindex),
         #畅言论坛
       url(r'^bbs/$',bbs),
