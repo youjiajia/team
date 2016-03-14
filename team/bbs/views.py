@@ -86,7 +86,7 @@ def addmemo(req):
         return render_to_response('memo/addmemor.html')
     elif req.method=='POST':
         if req.COOKIES.get('userid','')!='':
-            T_Memo.objects.create(MemberId=req.COOKIES.get('userid'),MimoContent=req.POST.get('content'))
+            T_Memo.objects.create(MemberId=T_Member.objects.get(UserID=req.COOKIES.get('userid')),MimoContent=req.POST.get('content'))
             return HttpResponse('1')
         else:
             return HttpResponse('0')
@@ -100,7 +100,9 @@ def memodetail(req):
 	print type(req.POST.get('content','nothing'))
         if req.COOKIES.get('userid','')!='':
             print req.POST.get('id')
-            a=T_Memo.objects.get(id=req.POST.get('id')).update(MimoContent=str(req.POST.get('content')))
+            memo=T_Memo.objects.get(id=req.POST.get('id'))
+            memo.MimoContent=req.POST.get('content')
+            memo.save()
             return HttpResponse('1')
         else:
             return HttpResponse('0')
@@ -127,5 +129,5 @@ def project(req):
             response.set_cookie('userid',jsonreturn['UserId'])
     return response
 
-def projectindex(req):
+#def projectindex(req):
     
