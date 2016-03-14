@@ -104,7 +104,7 @@ class T_Project(models.Model):
 class T_ProjectMember(models.Model):
     ProjectId=models.ForeignKey(T_Project, verbose_name='项目id')
     AdminId=models.ForeignKey(T_Admin, verbose_name='加入该程序员的管理员id')
-    MemberId=models.ForeignKey(T_Member, verbose_name='成员id')
+    MemberId=models.ForeignKey(T_Member, related_name='member_project', verbose_name='成员id')
     isHead=models.BooleanField(verbose_name='是否为项目负责人')
 
     def __str__(self):
