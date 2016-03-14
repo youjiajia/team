@@ -125,8 +125,8 @@ def project(req):
         jsonreturn=json.loads(the_page)
         print jsonreturn
         if jsonreturn.has_key('UserId'):
-            if T_Member.objects.filter(UserID=jsonreturn['UserID'],IsUsed=True).count()==0:
-                    T_Member.objects.create(UserID=jsonreturn['UserID'],IsUsed=True)
+            if T_Member.objects.filter(UserID=jsonreturn['UserId'],IsUsed=True).count()==0:
+                    T_Member.objects.create(UserID=jsonreturn['UserId'],IsUsed=True)
             response.set_cookie('userid',jsonreturn['UserId'])
     return response
 
