@@ -131,7 +131,6 @@ def project(req):
 
 def projectindex(req):
     member=T_Member.objects.get(UserID=req.COOKIES.get('userid'))
-    print T_Admin.objects.filter(MemberId=member).count()
     if T_Admin.objects.filter(MemberId=member).count()!=0:
         list=[]
         for admin in T_Admin.objects.filter(MemberId=member):
@@ -140,5 +139,5 @@ def projectindex(req):
         return render_to_response('project/projectlist.html',{"level":"admin","projects":projects})
     else:
         projects=T_ProjectMember.objects.filter(MemberId=member)
-        print projects.count()
+        print projects[0].id
         return render_to_response('project/projectlist.html',{"level":"member","projects":projects})
