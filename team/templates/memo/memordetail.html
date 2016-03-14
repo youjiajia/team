@@ -49,7 +49,7 @@
 </head>
 <body>
 	<div class="header">
-		<a class="afloat" href="/memo/"><i class="weui_icon_cancel"></i> 取消</a>
+		<a class="afloat" href="/deletememo/?id={{memo.id}}"><i class="weui_icon_cancel"></i> 删除</a>
 		<p style="display: inline-block;width: 2px;height: 20px;background-color: #999;margin: 10px;float: left;"></p>
 		<a href="#" onclick="postMenor()"><i class="weui_icon_success_circle"></i> 完成</a>
 		<a href="#"></a>
@@ -57,7 +57,7 @@
 	<div class="weui_cells weui_cells_form">
         <div class="weui_cell">
             <div class="weui_cell_bd weui_cell_primary">
-                <textarea style="background-image: url(/webStatic/image/1.jpg);line-height: 40px;" class="weui_textarea" id="memor_content" placeholder="输入文字" rows="12"></textarea>
+                <textarea style="background-image: url(/webStatic/image/1.jpg);line-height: 40px;" class="weui_textarea" id="memor_content" placeholder="输入文字" rows="12">{{memo.MimoContent}}</textarea>
             </div>
         </div>
     </div>
@@ -67,7 +67,7 @@
     		var content=$("#memor_content").val();
     		alert(content);
     		$.ajax({
-    			url:"/addmemo/",
+    			url:"/memodetail/",
     			type:"post",
     			data:{content:content},
     			success:function(data){

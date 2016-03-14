@@ -3,7 +3,7 @@
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=0">
-    <title>memor</title>
+    <title></title>
     <link rel="stylesheet" href="/webStatic/css/weui.min.css"/>
     <script type="text/javascript" src="http://code.jquery.com/jquery-1.6.1.min.js"></script>
     <style>
@@ -101,22 +101,17 @@
 	<div class="header">
 		备忘录
 		<div class="div_add_but">
-            <a href="addmemor.html" class="input_add_but"></a>
+            <a href="/addmemo/" class="input_add_but"></a>
         </div>
 	</div>
 	{% for onememo in memo %}
-	<div class="div_title">
-		<a href="addmemor.html?id="+{{onememo.id}}>
+	<div id="{{onememo.id}}" class="div_title">
+		<a href="/memodetail/?id={{onememo.id}}">
 			<span>{{ onememo.CreateTime|date:"Y-m-d H:i:s"|default:'未知日期' }}</span>
-			<p>{{onememo.MimoContent}}{% empty %}暂无备忘录</p>
+			<p>{{onememo.MimoContent}}</p>
 		</a>
 	</div>
+	{% empty %}暂无备忘录
 	{% endfor %}
-	<!-- <div class="div_title">
-		<a href="">
-			<span>2016-03-07</span>
-			<p>我说你听就行我说你听就行我说你听就行我说你听就行我说你听就行我说你听就行</p>
-		</a>
-	</div> -->
 </body>
 </html>

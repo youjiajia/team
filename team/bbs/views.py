@@ -97,8 +97,10 @@ def memodetail(req):
             memo=T_Memo.objects.get(id=req.GET.get('id'))
             return render_to_response('memo/memordetail.html',{'memo':memo})
     elif req.method=='POST':
-        if req.COOKIES.get('userid','')!='' & req.POST.get('content','')!='':
-            T_Memo.objects.get(id=req.POST.get('id')).update(MimoContent=req.POST.get('content'))
+	print type(req.POST.get('content','nothing'))
+        if req.COOKIES.get('userid','')!='':
+            print req.POST.get('id')
+            a=T_Memo.objects.get(id=req.POST.get('id')).update(MimoContent=str(req.POST.get('content')))
             return HttpResponse('1')
         else:
             return HttpResponse('0')
