@@ -187,7 +187,7 @@ def projectadd(req):
                     setattr(admin, 'Departmentname', dejson['name'])
         return render_to_response('project/projectadd.html', {'admins': admins})
     else:
-        with transaction.commit_on_success():
+        with transaction.atomic():
             pro = T_Project.objects.create(AdminId=T_Admin.objects.get(MemberId=member, Department_ID=int(req.POST.get('Department_ID', '1'))), Department_ID=int(req.POST.get('Department_ID', '1')), ProjectName=req.POST.get(
                 'ProjectName'), ProjectDescribe=req.POST.get('ProjectDescribe'),
                 ProjectStatus=req.POST.get('ProjectStatus'))
