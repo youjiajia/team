@@ -26,4 +26,5 @@ urlpatterns = [
       url(r'^addmemo/$',addmemo),
       url(r'^memodetail/$',memodetail),
       url(r'^deletememo/$',deletememo),
+      url(r'^projectadd/$',projectadd),
 ]

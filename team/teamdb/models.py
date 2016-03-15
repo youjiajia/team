@@ -92,8 +92,8 @@ class T_Project(models.Model):
     AdminId=models.ForeignKey(T_Admin, verbose_name='创建该项目的子部门管理员')
     Department_ID=models.CharField(max_length=50, verbose_name='部门id',default='-1')
     ProjectName=models.CharField(max_length=100, verbose_name='项目名称')
-    ProjectStartTime=models.DateTimeField(verbose_name='项目开始时间')
-    ProjectEndTime=models.DateTimeField(verbose_name='预计项目结束时间')
+    ProjectStartTime=models.DateField(verbose_name='项目开始时间')
+    ProjectEndTime=models.DateField(verbose_name='预计项目结束时间')
     ProjectDescribe=models.TextField(blank=True,null=True, verbose_name='项目描述')
     ProjectStatus=models.CharField(max_length=50, verbose_name='项目当前状态')
 

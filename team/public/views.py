@@ -26,6 +26,12 @@ def getToken(CorpSecret):
 	response = urllib2.urlopen(req)
 	the_page = response.read()
 	return json.loads(the_page)['access_token']
+#部门列表
+def getDepartmentList():
+	req = urllib2.Request('https://qyapi.weixin.qq.com/cgi-bin/department/list?access_token='+getToken(sCorpSecret))
+	response = urllib2.urlopen(req)
+	the_page = response.read()
+	return json.loads(the_page)['department']
 # 首次验证视图
 def index(req):
 	wxcpt=WXBizMsgCrypt(sToken,sEncodingAESKey,sCorpID)
