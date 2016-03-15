@@ -45,7 +45,7 @@ def bbs(req):
         access_token = getToken(sCorpSecret)
         code = req.GET.get('code')
         urlreq = urllib2.Request(
-            'https://qyapi.weixin.qq.com/cgi-bin/user/getuserinfo?access_token='+access_token+'&code='+code)
+            'https://qyapi.weixin.qq.com/cgi-bin/user/getuserinfo?access_token=' + access_token + '&code=' + code)
         urlresponse = urllib2.urlopen(urlreq)
         the_page = urlresponse.read()
         jsonreturn = json.loads(the_page)
@@ -63,7 +63,7 @@ class MemoTemplateView(TemplateView):
         access_token = getToken(sCorpSecret)
         code = request.GET.get('code')
         urlreq = urllib2.Request(
-            'https://qyapi.weixin.qq.com/cgi-bin/user/getuserinfo?access_token='+access_token+'&code='+code)
+            'https://qyapi.weixin.qq.com/cgi-bin/user/getuserinfo?access_token=' + access_token + '&code=' + code)
         urlresponse = urllib2.urlopen(urlreq)
         the_page = urlresponse.read()
         jsonreturn = json.loads(the_page)
@@ -145,7 +145,7 @@ def project(req):
         access_token = getToken(sCorpSecret)
         code = req.GET.get('code')
         urlreq = urllib2.Request(
-            'https://qyapi.weixin.qq.com/cgi-bin/user/getuserinfo?access_token='+access_token+'&code='+code)
+            'https://qyapi.weixin.qq.com/cgi-bin/user/getuserinfo?access_token=' + access_token + '&code=' + code)
         urlresponse = urllib2.urlopen(urlreq)
         the_page = urlresponse.read()
         jsonreturn = json.loads(the_page)
@@ -190,9 +190,28 @@ def projectadd(req):
         with transaction.commit_on_success():
             pro = T_Project.objects.create(AdminId=T_Admin.objects.get(MemberId=member, Department_ID=int(req.POST.get('Department_ID', '1'))), Department_ID=int(req.POST.get('Department_ID', '1')), ProjectName=req.POST.get(
                 'ProjectName'), ProjectStartTime=req.POST.get('ProjectStartTime'),
-                ProjectEndTime=req.POST.get('ProjectStartTime'),
-                ProjectDescribe=req.POST.get('ProjectStartTime'),
                 ProjectStatus=req.POST.get('ProjectStatus'))
+        return HttpResponse(str(pro.id))
+# 设置项目成员
+
+
+def projectmem(req):
+    if req.method == 'GET':
+        projectid = req.GET.get('id')
+        departmentid = T_Project.objects.get(id=projectid).Department_ID
+        List = []
+        for member in T_Member.objects.all():
+            if departmentid in member.memberinfo['department']:
+                List.append(member.id)
+        members = T_Member.objects.filter(id__in=List)
+        for onemember in members:
+            setattr(onemember, 'name', onemember.memberinfo['name'])
+        return render_to_response('project/promember.html', {'id': projectid, 'members': members})
+    else:
+        with transaction.commit_on_success():
+            projectid = req.POST.get('id')
+            T_ProjectMember.objects.filter(
+                ProjectId=T_Project.objects.get(id=projectid)).delete()
             members = req.POST.get('members').split(',')
             headers = req.POST.get('headers').split(',')
             for memberid in members:
@@ -201,4 +220,27 @@ def projectadd(req):
                     isheader = True
                 T_ProjectMember.objects.create(ProjectId=pro, AdminId=T_Admin.objects.get(MemberId=member, Department_ID=int(
                     req.POST.get('Department_ID', '1'))), MemberId=T_Member.objects.get(UserID=memberid), isHead=isheader)
-        return HttpResponse('success')
+            return HttpResponse('success')
+# 项目详情页面
+
+
+def projectdetail(req):
+    member = T_Member.objects.get(UserID=req.COOKIES.get('userid'))
+    admin = T_Admin.objects.filter(MemberId=member, Department_ID=T_Project.objects.get(
+        id=req.POST.get('id')).Department_ID)
+    if req.method == 'GET':
+        projectid = req.GET.get('id')
+        project = T_Project.objects.get(id=projectid)
+        if T_Module.objects.filter(ProjectId=project).count() == 0 & admin.count() != 0:
+            return render_to_response('project/projectdetail.html', {'project': project, 'change': '1'})
+        else:
+            return render_to_response('project/projectdetail.html', {'project': project, 'change': '0'})
+    else:
+        project = T_Project.objects.get(id=req.POST.get('id'))
+        project.AdminId = admin
+        project.Department_ID = req.POST.get('Department_ID')
+        project.ProjectName = req.POST.get('ProjectName')
+        project.ProjectDescribe = req.POST.get('ProjectDescribe')
+        project.ProjectStatus = req.POST.get('ProjectStatus')
+        project.save()
+        return HttpResponse(project.id)

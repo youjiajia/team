@@ -19,6 +19,9 @@ urlpatterns = [
         #项目管理
       url(r'^project/$',project),
       url(r'^projectindex/$',projectindex),
+      url(r'^projectadd/$',projectadd),
+      url(r'^projectdetail/$',projectdetail),
+      url(r'^projectmem/$',projectmem),
         #畅言论坛
       url(r'^bbs/$',bbs),
         #备忘录
@@ -26,5 +29,4 @@ urlpatterns = [
       url(r'^addmemo/$',addmemo),
       url(r'^memodetail/$',memodetail),
       url(r'^deletememo/$',deletememo),
-      url(r'^projectadd/$',projectadd),
 ]

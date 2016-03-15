@@ -92,8 +92,8 @@ class T_Project(models.Model):
     AdminId=models.ForeignKey(T_Admin, verbose_name='创建该项目的子部门管理员')
     Department_ID=models.CharField(max_length=50, verbose_name='部门id',default='-1')
     ProjectName=models.CharField(max_length=100, verbose_name='项目名称')
-    ProjectStartTime=models.DateField(verbose_name='项目开始时间')
-    ProjectEndTime=models.DateField(verbose_name='预计项目结束时间')
+    ProjectStartTime=models.DateField(auto_now_add=True,verbose_name='项目开始时间')
+    ProjectEndTime=models.DateField(blank=True,verbose_name='项目结束时间')
     ProjectDescribe=models.TextField(blank=True,null=True, verbose_name='项目描述')
     ProjectStatus=models.CharField(max_length=50, verbose_name='项目当前状态')
 
@@ -102,7 +102,7 @@ class T_Project(models.Model):
 
 #项目组成员表
 class T_ProjectMember(models.Model):
-    ProjectId=models.ForeignKey(T_Project, verbose_name='项目id')
+    ProjectId =models.ForeignKey(T_Project, verbose_name='项目id')
     AdminId=models.ForeignKey(T_Admin, verbose_name='加入该程序员的管理员id')
     MemberId=models.ForeignKey(T_Member, related_name='member_project', verbose_name='成员id')
     isHead=models.BooleanField(verbose_name='是否为项目负责人')
@@ -113,6 +113,7 @@ class T_ProjectMember(models.Model):
 #文档表
 class T_Document(models.Model):
     ProjectMemberId=models.ForeignKey(T_ProjectMember, verbose_name='创建文档项目组成员id')
+    ProjectId =models.ForeignKey(T_Project, verbose_name='项目id',blank=True,null=True)
     DocumentName=models.CharField(max_length=50, verbose_name='文档名称')
     DocumentUrl=models.CharField(max_length=100, verbose_name='文档路径')
 
@@ -122,6 +123,7 @@ class T_Document(models.Model):
 #模块表
 class T_Module(models.Model):
     ProjectMemberId=models.ForeignKey(T_ProjectMember, verbose_name='创建人id')
+    ProjectId =models.ForeignKey(T_Project, verbose_name='项目id',blank=True,null=True)
     ModuleName=models.CharField(max_length=50, verbose_name='模块名称')
     Level=models.IntegerField(verbose_name='模块优先级')
 
