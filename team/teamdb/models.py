@@ -93,7 +93,7 @@ class T_Project(models.Model):
     Department_ID=models.CharField(max_length=50, verbose_name='部门id',default='-1')
     ProjectName=models.CharField(max_length=100, verbose_name='项目名称')
     ProjectStartTime=models.DateField(auto_now_add=True,verbose_name='项目开始时间')
-    ProjectEndTime=models.DateField(blank=True,verbose_name='项目结束时间')
+    ProjectEndTime=models.DateField(auto_now=True,verbose_name='项目结束时间')
     ProjectDescribe=models.TextField(blank=True,null=True, verbose_name='项目描述')
     ProjectStatus=models.CharField(max_length=50, verbose_name='项目当前状态')
 
