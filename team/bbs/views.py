@@ -185,7 +185,7 @@ def projectadd(req):
             for dejson in dejsons:
                 if admin.Department_ID == dejson['id']:
                     setattr(admin, 'Departmentname', dejson['name'])
-        render_to_response('project/projectadd.html', {'admins': admins})
+        return render_to_response('project/projectadd.html', {'admins': admins})
     else:
         with transaction.commit_on_success():
             pro = T_Project.objects.create(AdminId=T_Admin.objects.get(MemberId=member, Department_ID=int(req.POST.get('Department_ID', '1'))), Department_ID=int(req.POST.get('Department_ID', '1')), ProjectName=req.POST.get(
