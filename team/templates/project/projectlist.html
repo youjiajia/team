@@ -95,13 +95,13 @@
 	<div class="header">
 		项目
 		<div class="div_add_but">
-            <a href="/addmemo/" class="input_add_but"></a>
+            <a href="/projectadd/" class="input_add_but"></a>
         </div>
 	</div>
 	{% for project in projects %}
 	<div class="pro_list">
 		<a href="/projectadd/?id={{project.id}}">
-			<span>{{ project.ProjectStartTime|date:"Y-m-d H:i:s"|default:'未知日期' }}</span>
+			<span>{{ project.ProjectStartTime|date:"Y-m-d"|default:'未知日期' }}</span>
 			<p>{{project.ProjectName}}</p>
 			<p>状态：{{project.ProjectStatus}}</p>
 		</a>

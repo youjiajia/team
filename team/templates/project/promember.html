@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=0">
+	<link rel="stylesheet" href="/webStatic/css/weui.min.css"/>
+	<style>
+		div,body,img{
+			margin:0;
+			padding: 0;
+		}
+		a{
+			cursor: pointer;
+			text-decoration: none;
+		}
+		.header{
+			width:99%;
+			height:40px;
+			padding-left:10px;
+			line-height: 40px;
+			background-color:#84A35D;
+			color: #ffffff;
+		}
+		.header a{
+			color: #ffffff;
+		}
+		.afloat{
+			float: left;
+		}
+		.member_checkbox{
+			width: 85%;
+			min-height: 400px;
+			height: auto;
+			margin: 10px;
+			padding: 10px 20px 10px 20px;
+			border-radius:5px; 
+			border: 1px dashed #aaa;
+		}
+		.member_checkbox > div{
+			/*display: inline-block;*/
+			width: 100%;
+			height: 40px;
+			line-height: 40px;
+			/*text-align: center;*/
+		} 
+		.member_checkbox > div label{
+			display: inline-block;
+			color: #555;
+			font-size: 12px;
+		}
+		.member_checkbox > div span{
+			font-size: 12px;
+			margin-right: 45px;
+		}
+		.member_checkbox > div input{
+			margin-right: 50px;
+		}
+	</style>
+</head>
+<body>
+	<input type="hidden" id="pro_id" value="{{id}}">
+	<div class="header">
+		<a class="afloat" href="/memo/"><i class="weui_icon_cancel"></i> 返回</a>
+		<p style="display: inline-block;width: 2px;height: 20px;background-color: #ffffff;margin: 10px;float: left;"></p>
+		<a href="#" onclick="submitmember();"><i class="weui_icon_success_circle"></i> 提交</a>
+	</div>
+	<div class="member_checkbox">
+		<div>
+			<span>成员</span>
+			<span>负责人</span>
+		</div>
+		{% for member in members %}
+		<div>
+			<input type="hidden" id="hidden_ismember" value="{{member.ismember}}">
+			<input type="hidden" id="hidden_isheader" value="{{member.isheader}}">
+			<input type="checkbox" name="checkbox_member" value="{{member.id}}"><input type="checkbox" name="checkbox_header" value="{{member.id}}"><label>{{member.name}}</label>
+		</div>
+		{% empty %}暂无成员
+		{% endfor %}
+	</div>
+	<script src="/webStatic/js/jquery.min.js"></script>
+	<!-- <script src="../jquery.min.js"></script> -->
+	<script>
+		function submitmember() {
+			var strmember="";
+			var strheader="";
+			var pro_id=$("#pro_id").val();
+			$("input[name='checkbox_member']").each(function(){
+				if($(this).is(":checked")){
+					strmember+=$(this).val()+",";
+				}
+			});
+			$("input[name='checkbox_header']").each(function(){
+				if($(this).is(":checked")){
+					strheader+=$(this).val()+",";
+				}
+			});
+			var data={};
+			data['id']=pro_id;
+			data['members']=strmember;
+			data['headers']=strheader;
+			$.ajax(function(){
+				url:"/projectmem/",
+    			type:"post",
+    			data:data,
+    			success:function(data){
+    				if(data==1){
+    					location.href="/projectindex/";
+    				}
+    			},
+    			error:function(xhr){
+    				alert("出错"+xhr.responseText);
+    			}
+			})
+		}
+	</script>
+</body>
+</html>
