@@ -210,7 +210,7 @@ def projectmem(req):
             setattr(onemember, 'isheader', '0')
             if T_ProjectMember.objects.filter(ProjectId=T_Project.objects.get(id=projectid),MemberId=onemember).count()!=0:
                 setattr(onemember, 'ismember', '1')
-                if T_ProjectMember.objects.get(ProjectId=T_Project.objects.get(id=projectid),MemberId=onemember).isHead=True:
+                if T_ProjectMember.objects.get(ProjectId=T_Project.objects.get(id=projectid),MemberId=onemember).isHead==True:
                     setattr(onemember, 'ismember', '1')
         return render_to_response('project/promember.html', {'id': projectid, 'members': members})
     else:
