@@ -22,6 +22,10 @@ urlpatterns = [
       url(r'^projectadd/$',projectadd),
       url(r'^projectdetail/$',projectdetail),
       url(r'^projectmem/$',projectmem),
+      url(r'^moduleindex/$',moduleindex),
+      url(r'^addmodule/$',addmodule),
+      url(r'^deletemodule/$',deletemodule),
+      url(r'^moduledetail/$',moduledetail),
         #畅言论坛
       url(r'^bbs/$',bbs),
         #备忘录
