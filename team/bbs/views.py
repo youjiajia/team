@@ -215,8 +215,8 @@ def projectmem(req):
         List = []
         for member in T_Member.objects.all():
             print member.memberinfo['department']
-            print departmentid in member.memberinfo['department']
-            if departmentid in member.memberinfo['department']:
+            print int(departmentid) in member.memberinfo['department']
+            if int(departmentid) in member.memberinfo['department']:
                 List.append(member.id)
         print List
         members = T_Member.objects.filter(id__in=List)
