@@ -215,11 +215,12 @@ def projectmem(req):
         List = []
         for member in T_Member.objects.all():
             print member.memberinfo['department']
+            print departmentid in member.memberinfo['department']
             if departmentid in member.memberinfo['department']:
                 List.append(member.id)
         print List
         members = T_Member.objects.filter(id__in=List)
-        print 'membersnum:'+members.count()
+        print 'membersnum:'+str(members.count())
         for onemember in members:
             setattr(onemember, 'name', onemember.memberinfo['name'])
             setattr(onemember, 'ismember', '0')
