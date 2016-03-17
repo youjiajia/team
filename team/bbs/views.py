@@ -211,16 +211,13 @@ def projectmem(req):
     if req.method == 'GET':
         projectid = req.GET.get('id')
         departmentid = T_Project.objects.get(id=projectid).Department_ID
-        print departmentid
         List = []
         for member in T_Member.objects.all():
             print member.memberinfo['department']
             print int(departmentid) in member.memberinfo['department']
             if int(departmentid) in member.memberinfo['department']:
                 List.append(member.id)
-        print List
         members = T_Member.objects.filter(id__in=List)
-        print 'membersnum:'+str(members.count())
         for onemember in members:
             setattr(onemember, 'name', onemember.memberinfo['name'])
             setattr(onemember, 'ismember', '0')
@@ -229,7 +226,6 @@ def projectmem(req):
                 setattr(onemember, 'ismember', '1')
                 if T_ProjectMember.objects.get(ProjectId=T_Project.objects.get(id=projectid), MemberId=onemember).isHead == True:
                     setattr(onemember, 'ismember', '1')
-        print members.count()
         return render_to_response('project/promember.html', {'id': projectid, 'members': members})
     else:
         with transaction.commit_on_success():
