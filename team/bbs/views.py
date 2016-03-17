@@ -244,9 +244,8 @@ def projectmem(req):
 def projectdetail(req):
     # 项目详情页面
     member = T_Member.objects.get(UserID=req.COOKIES.get('userid'))
-    admin = T_Admin.objects.filter(MemberId=member, Department_ID=T_Project.objects.get(
-        id=req.POST.get('id')).Department_ID)
     if req.method == 'GET':
+        admin = T_Admin.objects.filter(MemberId=member, Department_ID=T_Project.objects.get(id=req.GET.get('id')).Department_ID)
         projectid = req.GET.get('id')
         project = T_Project.objects.get(id=projectid)
         if T_Module.objects.filter(ProjectId=project).count() == 0 & admin.count() != 0:
@@ -254,6 +253,7 @@ def projectdetail(req):
         else:
             return render_to_response('project/projectdetail.html', {'project': project, 'change': '0'})
     else:
+        admin = T_Admin.objects.get(MemberId=member, Department_ID=T_Project.objects.get(id=req.POST.get('id')).Department_ID)
         project = T_Project.objects.get(id=req.POST.get('id'))
         project.AdminId = admin
         project.Department_ID = req.POST.get('Department_ID')

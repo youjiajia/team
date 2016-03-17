@@ -100,7 +100,7 @@
 	</div>
 	{% for project in projects %}
 	<div class="pro_list">
-		<a href="/projectadd/?id={{project.id}}">
+		<a href="/projectindex/?id={{project.id}}">
 			<span>{{ project.ProjectStartTime|date:"Y-m-d"|default:'未知日期' }}</span>
 			<p>{{project.ProjectName}}</p>
 			<p>状态：{{project.ProjectStatus}}</p>
@@ -108,5 +108,17 @@
 	</div>
 	{% empty %}暂无项目
 	{% endfor %}
+	<script src="/webStatic/js/jquery.min.js"></script>
+	<script>
+		$(function(){
+			var level=$("#level_hidden").val();
+			$(".div_add_but").hide();
+			if(level=="admin"){
+				$(".div_add_but").show();
+			}else{
+				$(".div_add_but").hide();
+			}
+		})
+	</script>
 </body>
 </html>
