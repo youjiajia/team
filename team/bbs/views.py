@@ -245,6 +245,7 @@ def projectdetail(req):
     # 项目详情页面
     member = T_Member.objects.get(UserID=req.COOKIES.get('userid'))
     if req.method == 'GET':
+        print req.GET.get('id')
         admin = T_Admin.objects.filter(MemberId=member, Department_ID=T_Project.objects.get(id=req.GET.get('id')).Department_ID)
         projectid = req.GET.get('id')
         project = T_Project.objects.get(id=projectid)
