@@ -183,6 +183,7 @@ def project(req):
 
 
 def projectindex(req):
+    print req.GET.get('id')
     # 项目列表
         return render_to_response('project/promanage.html', {'id':req.GET.get('id')})
 
