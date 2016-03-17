@@ -203,6 +203,7 @@ def projectadd(req):
             pro = T_Project.objects.create(AdminId=T_Admin.objects.get(MemberId=member, Department_ID=int(req.POST.get('Department_ID', '1'))), Department_ID=int(req.POST.get('Department_ID', '1')), ProjectName=req.POST.get(
                 'ProjectName'), ProjectDescribe=req.POST.get('ProjectDescribe'),
                 ProjectStatus=req.POST.get('ProjectStatus'))
+        print str(pro.id)
         return HttpResponse(str(pro.id))
 
 
