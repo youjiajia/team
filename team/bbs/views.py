@@ -213,8 +213,6 @@ def projectmem(req):
         departmentid = T_Project.objects.get(id=projectid).Department_ID
         List = []
         for member in T_Member.objects.all():
-            print member.memberinfo['department']
-            print int(departmentid) in member.memberinfo['department']
             if int(departmentid) in member.memberinfo['department']:
                 List.append(member.id)
         members = T_Member.objects.filter(id__in=List)
