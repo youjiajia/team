@@ -248,10 +248,7 @@ def projectdetail(req):
         admin = T_Admin.objects.filter(MemberId=member, Department_ID=T_Project.objects.get(id=req.GET.get('id')).Department_ID)
         projectid = req.GET.get('id')
         project = T_Project.objects.get(id=projectid)
-        print T_Module.objects.filter(ProjectId=project).count()==0
-        print admin.count()!=0
         if (T_Module.objects.filter(ProjectId=project).count() == 0) & (admin.count() != 0):
-            print 'dsfsdf'
             return render_to_response('project/projectdetail.html', {'project': project, 'change': '1'})
         else:
             return render_to_response('project/projectdetail.html', {'project': project, 'change': '0'})
