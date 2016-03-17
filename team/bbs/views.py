@@ -183,7 +183,6 @@ def project(req):
 
 
 def projectindex(req):
-    print req.GET.get('id')
     # 项目列表
     return render_to_response('project/promanage.html', {'id':req.GET.get('id')})
 
@@ -246,10 +245,11 @@ def projectdetail(req):
     # 项目详情页面
     member = T_Member.objects.get(UserID=req.COOKIES.get('userid'))
     if req.method == 'GET':
-        print req.GET.get('id')
         admin = T_Admin.objects.filter(MemberId=member, Department_ID=T_Project.objects.get(id=req.GET.get('id')).Department_ID)
         projectid = req.GET.get('id')
         project = T_Project.objects.get(id=projectid)
+        print T_Module.objects.filter(ProjectId=project).count()
+        print admin.count()
         if T_Module.objects.filter(ProjectId=project).count() == 0 & admin.count() != 0:
             return render_to_response('project/projectdetail.html', {'project': project, 'change': '1'})
         else:
