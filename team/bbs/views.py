@@ -224,6 +224,7 @@ def projectmem(req):
                 setattr(onemember, 'ismember', '1')
                 if T_ProjectMember.objects.get(ProjectId=T_Project.objects.get(id=projectid), MemberId=onemember).isHead == True:
                     setattr(onemember, 'ismember', '1')
+        print members.count()
         return render_to_response('project/promember.html', {'id': projectid, 'members': members})
     else:
         with transaction.commit_on_success():
