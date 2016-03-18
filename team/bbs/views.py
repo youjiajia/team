@@ -283,7 +283,7 @@ def addmodule(req):
         T_Module.objects.create(ProjectMemberId=projectmember,ProjectId=project,ModuleName=req.POST.get('ModuleName'),Level=int(req.POST.get('Level')))
         return HttpResponse('success')
     elif req.method=='GET':
-        render_to_response('module/moduleadd.html')
+        return render_to_response('module/moduleadd.html')
 
 def deletemodule(req):
     #删除模块
