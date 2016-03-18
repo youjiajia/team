@@ -103,8 +103,8 @@
 		<a class="afloat" href="/projectindex/?id={{id}}"><i class="weui_icon_cancel"></i> 返回</a>
 		模块
 		<div class="div_add_but">
-            <a href="/addmodule/?id={{id}}" class="input_add_but"></a>
-        </div>
+		            <a href="/addmodule/?id={{id}}" class="input_add_but"></a>
+		</div>
 	</div>
 	{% for module in modulelist %}
 	<div class="module_list">
@@ -114,5 +114,17 @@
 	</div>
 	{% empty %}暂无模块
 	{% endfor %}
+	<script src="/webStatic/js/jquery.min.js"></script>
+	<script>
+		$(function(){
+			var level=$("#level_hidden").val();
+			$(".div_add_but").hide();
+			if(level=="admin"){
+				$(".div_add_but").show();
+			}else{
+				$(".div_add_but").hide();
+			}
+		})
+	</script>
 </body>
 </html>
