@@ -269,7 +269,7 @@ def moduleindex(req):
     member = T_Member.objects.get(UserID=req.COOKIES.get('userid'))
     modulelist=T_Module.objects.filter(ProjectId=T_Project.objects.get(id=req.GET.get('id')))
     if T_Admin.objects.filter(MemberId=member,Department_ID=T_Project.objects.get(
-        id=req.POST.get('id')).Department_ID).count() != 0:
+        id=req.GET.get('id')).Department_ID).count() != 0:
         return render_to_response('module/modulelist.html', {"level": "admin", "modulelist": modulelist})
     else:
         return render_to_response('module/modulelist.html', {"level": "member", "modulelist": modulelist})
