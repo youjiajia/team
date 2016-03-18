@@ -100,15 +100,15 @@
 <body>
 	<input type="hidden" id="level_hidden" value="{{level}}">
 	<div class="header">
-		<a class="afloat" href="/projectindex/?id={{project.id}}"><i class="weui_icon_cancel"></i> 返回</a>
+		<a class="afloat" href="/projectindex/?id={{id}}"><i class="weui_icon_cancel"></i> 返回</a>
 		模块
 		<div class="div_add_but">
-            <a href="/addmodule/" class="input_add_but"></a>
+            <a href="/addmodule/?id={{id}}" class="input_add_but"></a>
         </div>
 	</div>
 	{% for module in modulelist %}
 	<div class="module_list">
-		<a href="/projectadd/?id={{module.ProjectMemberId}}">
+		<a href="/projectadd/?id={{module.id}}">
 			<p>模块名称：{{module.ModuleName}}</p>
 		</a>
 	</div>

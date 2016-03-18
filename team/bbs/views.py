@@ -270,9 +270,9 @@ def moduleindex(req):
     modulelist=T_Module.objects.filter(ProjectId=T_Project.objects.get(id=req.GET.get('id')))
     if T_Admin.objects.filter(MemberId=member,Department_ID=T_Project.objects.get(
         id=req.GET.get('id')).Department_ID).count() != 0:
-        return render_to_response('module/modulelist.html', {"level": "admin", "modulelist": modulelist})
+        return render_to_response('module/modulelist.html', {"level": "admin","id":req.GET.get('id'),"modulelist": modulelist})
     else:
-        return render_to_response('module/modulelist.html', {"level": "member", "modulelist": modulelist})
+        return render_to_response('module/modulelist.html', {"level": "member", "id":req.GET.get('id'),"modulelist": modulelist})
 
 def addmodule(req):
     #添加模块
