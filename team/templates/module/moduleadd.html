@@ -98,6 +98,7 @@
 			var modul_name=$("#inp_name").val();
 			var modul_status=$("#sel_status").val();
 			var jsondata={};
+			jsondata['id']={{id}};
 			jsondata['ModuleName']=modul_name;
 			jsondata['Level']=modul_status;
 			$.ajaxSetup({ 
