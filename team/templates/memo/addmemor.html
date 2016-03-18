@@ -69,7 +69,7 @@
     		$.ajax({
     			url:"/addmemo/",
     			type:"post",
-    			data:{content:content},
+    			data:{'content':content},
     			success:function(data){
     				if(data==1){
     					location.href="/memo/";

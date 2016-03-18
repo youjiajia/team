@@ -63,9 +63,10 @@
 </head>
 <body>
 	<div class="header">
-		<a class="afloat" href="/projectindex/"><i class="weui_icon_cancel"></i> 返回</a>
+		<a class="afloat" href="/projectindex/?id={{project.id}}"><i class="weui_icon_cancel"></i> 返回</a>
 		<p style="display: inline-block;width: 2px;height: 20px;background-color: #fff;margin: 10px;float: left;"></p>
 		<a href="#" id="pro_next" onclick="postform();"><i class="weui_icon_success_circle"></i> 下一步</a>
+		<a href="#" id="delete_pro" style="color: #DD574B;float: right;margin-right: 10px;">删除</a>
 		<input type="hidden" id="hidden_change" value="{{change}}">
 	</div>
 	<div class="form_div">
@@ -109,6 +110,7 @@
 	<script>
 		$(function () {
 			$("#pro_next").hide();
+			$("#delete_pro").hide();
 			$("#sel_department").val({{project.Department_ID}});
 			$("#sel_status").val('{{project.ProjectStatus}}');
 			hide();
@@ -116,12 +118,15 @@
 		function hide(){
 			var change=$("#hidden_change").val();
 			if(change=="1"){
+				$("#delete_pro").show();
 				$("#pro_next").show();
 			}else{
+				$("#delete_pro").hide();
 				$("#pro_next").hide();
 			}	
 		}
 		function postform(){
+			// alert($("#hidden_proid").val());
 			var pro_department=$("#sel_department").val();
 			var pro_name=$("#inp_name").val();
 			var pro_description=$("#area_description").val();

@@ -16,6 +16,17 @@
 		body{
 			font-family: "Microsoft YaHei";
 		}
+		.header{
+			width:100%;
+			height:40px;
+			padding-left:10px;
+			line-height: 40px;
+			background-color:#84A35D;
+			color: #ffffff;
+		}
+		.header a{
+			color: #ffffff;
+		}
 		.banner_div{
 			position: relative;
 			min-height: 300px;
@@ -37,26 +48,28 @@
 		.banner_div p a{
 			display: block;
 			width: 100%;
-			padding-left:20px;
+			padding-left:10px;
 			/*font-size: 16px;*/
-			color: #84A35D;
+			color: #666;
 		}
 		.banner_div p a:hover{
-			color: #fff;
+			color: #84A35D;
 		}
 		.banner_div p:hover{
-			background-color: #84A35D;
+			/*background-color: #84A35D;*/
 			color: #fff;
 		}
 	</style>
 </head>
 <body>
-
+	<div class="header">
+		<a class="afloat" href="/project/"> 返回</a>
+	</div>
 	<div class="banner_div">
 		<!-- <ul class="ul_list"> -->
 			<p><a href="/projectdetail/?id={{id}}"><i class="weui_icon_circle"></i>&nbsp;&nbsp;&nbsp;&nbsp;项目详情</a></p>
 			<p><a href="/projectindex/"><i class="weui_icon_circle"></i>&nbsp;&nbsp;&nbsp;&nbsp;任务</a></p>
-			<p><a href=""><i class="weui_icon_circle"></i>&nbsp;&nbsp;&nbsp;&nbsp;模块</a></p>
+			<p><a href="/moduleindex/?id={{id}}"><i class="weui_icon_circle"></i>&nbsp;&nbsp;&nbsp;&nbsp;模块</a></p>
 			<p><a href=""><i class="weui_icon_circle"></i>&nbsp;&nbsp;&nbsp;&nbsp;需求</a></p>
 			<p><a href=""><i class="weui_icon_circle"></i>&nbsp;&nbsp;&nbsp;&nbsp;文档</a></p>
 			<p><a href=""><i class="weui_icon_circle"></i>&nbsp;&nbsp;&nbsp;&nbsp;测试</a></p>

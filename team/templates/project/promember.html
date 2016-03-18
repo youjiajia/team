@@ -29,7 +29,7 @@
 			float: left;
 		}
 		.member_checkbox{
-			width: 85%;
+			width: 83%;
 			min-height: 400px;
 			height: auto;
 			margin: 10px;
@@ -51,10 +51,10 @@
 		}
 		.member_checkbox > div span{
 			font-size: 12px;
-			margin-right: 45px;
+			margin-right: 40px;
 		}
 		.member_checkbox > div input{
-			margin-right: 50px;
+			margin-right: 55px;
 		}
 	</style>
 </head>
@@ -63,7 +63,7 @@
 	<div class="header">
 		<a class="afloat" href="/projectdetail/?id={{id}}"><i class="weui_icon_cancel"></i> 返回</a>
 		<p style="display: inline-block;width: 2px;height: 20px;background-color: #ffffff;margin: 10px;float: left;"></p>
-		<a href="#" onclick="submitmember();"><i class="weui_icon_success_circle"></i> 提交</a>
+		<a href="" id="submember"><i class="weui_icon_success_circle"></i> 提交</a>
 	</div>
 	<div class="member_checkbox">
 		<div>
@@ -72,9 +72,17 @@
 		</div>
 		{% for member in members %}
 		<div>
-			<input type="hidden" id="hidden_ismember" value="{{member.ismember}}">
-			<input type="hidden" id="hidden_isheader" value="{{member.isheader}}">
-			<input type="checkbox" name="checkbox_member" value="{{member.id}}"><input type="checkbox" name="checkbox_header" value="{{member.id}}"><label>{{member.name}}</label>
+			{% ifequal member.ismember "1" %}   
+			    <input type="checkbox" checked name="checkbox_member" value="{{member.id}}">  
+			{% else %}   
+			    <input type="checkbox" name="checkbox_member" value="{{member.id}}">  
+			{% endifequal %}  
+			{% ifequal member.isheader '1' %}   
+			    <input type="checkbox" checked name="checkbox_header" value="{{member.id}}">  
+			{% else %}   
+			    <input type="checkbox" name="checkbox_header" value="{{member.id}}">  
+			{% endifequal %}
+			<label>{{member.name}}</label>
 		</div>
 		{% empty %}暂无成员
 		{% endfor %}
@@ -82,7 +90,12 @@
 	<script src="/webStatic/js/jquery.min.js"></script>
 	<!-- <script src="../jquery.min.js"></script> -->
 	<script>
-		function submitmember() {
+	$(function(){
+		$("#submember").off('click').click(function(){
+			submember();
+		})
+	})
+		function submember() {
 			var strmember="";
 			var strheader="";
 			var pro_id=$("#pro_id").val();
@@ -96,24 +109,29 @@
 					strheader+=$(this).val()+",";
 				}
 			});
-			var data={};
-			data['id']=pro_id;
-			data['members']=strmember;
-			data['headers']=strheader;
-			$.ajax(function(){
+			var datamem={};
+			datamem['id']=pro_id;
+			datamem['members']=strmember;
+			datamem['headers']=strheader;
+			$.ajaxSetup({ 
+				async : false 
+			}); 
+			$.ajax({
 				url:"/projectmem/",
     			type:"post",
-    			data:data,
+    			data:datamem,
     			success:function(data){
-    				if(data==1){
+    				if(data=='success'){
     					location.href="/projectindex/";
     				}
     			},
     			error:function(xhr){
     				alert("出错"+xhr.responseText);
     			}
-			})
+			});
 		}
+
+		
 	</script>
 </body>
 </html>
