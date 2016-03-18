@@ -267,7 +267,7 @@ def projectdetail(req):
 def moduleindex(req):
     #模块列表
     member = T_Member.objects.get(UserID=req.COOKIES.get('userid'))
-    modulelist=T_Module.objects.filter(ProjectId=req.GET.get('id'))
+    modulelist=T_Module.objects.filter(ProjectId=T_Project.objects.get(id=req.GET.get('id')))
     if T_Admin.objects.filter(MemberId=member,Department_ID=T_Project.objects.get(
         id=req.POST.get('id')).Department_ID).count() != 0:
         return render_to_response('module/modulelist.html', {"level": "admin", "modulelist": modulelist})
