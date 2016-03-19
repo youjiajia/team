@@ -325,9 +325,9 @@ def demandlist(req):
     demands=T_Demand.objects.filter(ModuleId__in=modules).order_by('DemandStatus','Level')
     promember=T_ProjectMember.objects.get(ProjectId=project,MemberId=member)
     if promember.isHead:
-        return render_to_response('demand/demandlist.html',{'demands':demands,'isheader':'1'})
+        return render_to_response('demand/demandlist.html',{'demands':demands,'isheader':'1',"id":req.GET.get('id')})
     else:
-        return render_to_response('demand/demandlist.html',{'demands':demands,'isheader':'0'})
+        return render_to_response('demand/demandlist.html',{'demands':demands,'isheader':'0',"id":req.GET.get('id')})
 
 def demandadd(req):
     #需求添加
@@ -364,3 +364,4 @@ def demanddetail(req):
         module=T_Module.objects.get(id=req.POST.get('meduleid'))
         T_Demand.objects.get(id=req.POST.get('demandid')).update(ModuleId=module,DemandName=req.POST.get('DemandName'),DemandStatus=req.POST.get('DemandStatus'),Level=int(req.POST.get('Level')),DemandDescribe=req.POST.get('DemandDescribe'))
         return HttpResponse('success')
+
