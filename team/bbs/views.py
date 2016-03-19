@@ -345,6 +345,7 @@ def demandadd(req):
 
 def demanddelete(req):
     #删除需求
+    print req.GET.get('demandid')
     T_Demand.objects.get(id=req.GET.get('demandid')).delete()
     return HttpResponse('success')
 
@@ -396,7 +397,6 @@ def adddocument(req):
 
 def deletedocument(req):
     #文档删除
-    print req.GET.get('documentid')
     T_Document.objects.get(id=req.GET.get('documentid')).delete()
     return HttpResponseRedirect('/documentlist/?id='+req.GET.get('id'))
 
