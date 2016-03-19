@@ -141,8 +141,6 @@ def project(req):
     if req.COOKIES.get('userid', '') == '':
         access_token = getToken(sCorpSecret)
         code = req.GET.get('code')
-        print access_token
-        print code
         urlreq = urllib2.Request(
             'https://qyapi.weixin.qq.com/cgi-bin/user/getuserinfo?access_token=' + access_token + '&code=' + code)
         urlresponse = urllib2.urlopen(urlreq)
@@ -250,7 +248,7 @@ def projectdetail(req):
         admin = T_Admin.objects.filter(MemberId=member, Department_ID=T_Project.objects.get(id=req.GET.get('id')).Department_ID)
         projectid = req.GET.get('id')
         project = T_Project.objects.get(id=projectid)
-        if (T_Module.objects.filter(ProjectId=project).count() == 0) & (admin.count() != 0):
+        if admin.count() != 0:#(T_Module.objects.filter(ProjectId=project).count() == 0) & (admin.count() != 0):
             return render_to_response('project/projectdetail.html', {'project': project, 'change': '1'})
         else:
             return render_to_response('project/projectdetail.html', {'project': project, 'change': '0'})
