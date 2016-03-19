@@ -339,7 +339,7 @@ def demandadd(req):
         T_Demand.objects.create(ProjectMemberId=projectmember,ModuleId=module,DemandName=req.POST.get('DemandName'),DemandStatus=req.POST.get('DemandStatus'),Level=int(req.POST.get('Level')),DemandDescribe=req.POST.get('DemandDescribe'))
         return HttpResponse('success')
     elif req.method=='GET':
-        project=T_Project.objects.get(id=req.POST.get('id'))
+        project=T_Project.objects.get(id=req.GET.get('id'))
         modules=T_Module.objects.filter(ProjectId=project)
         return render_to_response('demand/demandadd.html',{'id':req.GET.get('id'),'modules':modules})
 
@@ -352,7 +352,7 @@ def demanddetail(req):
     #需求详情
     if req.method=='GET':
         member = T_Member.objects.get(UserID=req.COOKIES.get('userid'))
-        project=T_Project.objects.get(id=req.POST.get('id'))
+        project=T_Project.objects.get(id=req.GET.get('id'))
         modules=T_Module.objects.filter(ProjectId=project)
         projectmember=T_ProjectMember.objects.get(ProjectId=project,MemberId=member)
         demand=T_Demand.objects.get(id=req.GET.get('demandid'))
@@ -365,3 +365,25 @@ def demanddetail(req):
         T_Demand.objects.get(id=req.POST.get('demandid')).update(ModuleId=module,DemandName=req.POST.get('DemandName'),DemandStatus=req.POST.get('DemandStatus'),Level=int(req.POST.get('Level')),DemandDescribe=req.POST.get('DemandDescribe'))
         return HttpResponse('success')
 
+def documentlist(req):
+    #文档列表页
+    project=T_Project.objects.get(id=req.GET.get('id'))
+    documents=T_Document.objects.filter(ProjectId=project)
+    return render_to_response('document/documentlist.html',{'documents':documents,"id":req.GET.get('id')})
+
+def adddocument(req):
+    #文档添加页面
+    if req.method=='GET':
+        return render_to_response('document/adddocument.html',{'id':req.GET.get('id')})
+    else:
+        reqfile = req.FILES['file']
+        path=os.path.join(basePath,"webStatic/upload/"+name+".xls")
+        name=str(time.strftime('%Y%m%d%H%M%S'))
+        project=T_Project.objects.get(id=req.POST.get('id'))
+        member = T_Member.objects.get(UserID=req.COOKIES.get('userid'))
+        projectmember=T_ProjectMember.objects.get(ProjectId=project,MemberId=member)
+        with open(path, 'wb+') as destination:
+            for chunk in ExcelUpload.chunks():
+                destination.write(chunk)
+        T_Document.objects.create(ProjectMemberId=projectmember,ProjectId=project,DocumentName=req.POST.get('DocumentName'),DocumentUrl=path)
+        return HttpResponseRedirect('/documentlist/?id='+req.POST.get('id'))

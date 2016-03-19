@@ -30,6 +30,8 @@ urlpatterns = [
       url(r'^demandadd/$',demandadd),
       url(r'^demanddelete/$',demanddelete),
       url(r'^demanddetail/$',demanddetail),
+      url(r'^documentlist/$',documentlist),
+      url(r'^adddocument/$',adddocument),
         #畅言论坛
       url(r'^bbs/$',bbs),
         #备忘录
