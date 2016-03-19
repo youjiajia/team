@@ -172,6 +172,7 @@ class T_DemandBugLog(models.Model):
     BugId=models.ForeignKey(T_Bug,blank=True,null=True, verbose_name='bug的id')
     DemandId=models.ForeignKey(T_Demand,blank=True,null=True, verbose_name='需求id')
     LogContent=models.TextField(verbose_name='日志内容')
+    CreateTime=models.DateTimeField(auto_now_add=True,blank=True,null=True, verbose_name='时间')
 
     def __str__(self):
         return self.LogContent
@@ -181,6 +182,7 @@ class T_DemandAssigned(models.Model):
     ProjectMemberId=models.ForeignKey(T_ProjectMember, verbose_name='指派项目组成员id')
     BugId=models.ForeignKey(T_Bug,blank=True,null=True, verbose_name='Bugid(bugid和需求id二者有一个即可)')
     DemandId=models.ForeignKey(T_Demand,blank=True,null=True, verbose_name='需求id')
+    CreateTime=models.DateTimeField(auto_now_add=True,blank=True,null=True, verbose_name='指派时间')
 
     def __str__(self):
         return self.ProjectMemberId.MemberId.memberinfo['name']

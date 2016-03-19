@@ -22,6 +22,7 @@ import xml.etree.cElementTree as ET
 from public.views import getToken, getDepartmentList
 from teamdb.models import *
 
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 basePath = os.path.dirname(os.path.dirname(__file__))
 logPath = os.path.join(basePath, "log/indexviewError.txt")
 informationStateXml = os.path.join(basePath, "webStatic/xml/weiConfig.xml")
@@ -414,7 +415,7 @@ def adddocument(req):
     else:
         reqfile = req.read()
         name = str(time.strftime('%Y%m%d%H%M%S'))
-        path = os.path.join(basePath, "webStatic/upload/" +
+        path = os.path.join(BASE_DIR, "webStatic/upload/" +
                             name + req.META.get('HTTP_FILENAME'))
         project = T_Project.objects.get(id=req.META.get('HTTP_ID'))
         member = T_Member.objects.get(UserID=req.COOKIES.get('userid'))
@@ -443,7 +444,7 @@ def documentdetail(req):
     else:
         reqfile = req.read()
         name = str(time.strftime('%Y%m%d%H%M%S'))
-        path = os.path.join(basePath, "webStatic/upload/" +
+        path = os.path.join(BASE_DIR, "webStatic/upload/" +
                             name + req.META.get('HTTP_FILENAME'))
         project = T_Project.objects.get(id=req.META.get('HTTP_ID'))
         member = T_Member.objects.get(UserID=req.COOKIES.get('userid'))
@@ -568,7 +569,7 @@ def bugdelete(req):
 
 
 def bugdetail(req):
-    # 需求详情
+    # bug详情
     if req.method == 'GET':
         member = T_Member.objects.get(UserID=req.COOKIES.get('userid'))
         project = T_Project.objects.get(id=req.GET.get('id'))
@@ -594,3 +595,91 @@ def bugdetail(req):
         T_DemandBugLog.objects.create(
             ProjectMemberId=projectmember, BugId=bug, LogContent='更新BUG')
         return HttpResponseRedirect('/bug/?id=' + req.POST.get('id'))
+
+def assignlist(req):
+    #任务列表
+    member = T_Member.objects.get(UserID=req.COOKIES.get('userid'))
+    project = T_Project.objects.get(id=req.GET.get('id'))
+    promember = T_ProjectMember.objects.get(ProjectId=project, MemberId=member)
+    demands=T_DemandAssigned.objects.filter(ProjectMemberId=promember).exclude(DemandId=None).order_by('-CreateTime')
+    bugs=T_DemandAssigned.objects.filter(ProjectMemberId=promember).exclude(BugId=None).order_by('-CreateTime')
+    if promember.isHead:
+        return render_to_response('assign/assignlist.html', {'demands':demands,'bugs': bugs, 'isheader': '1', "id": req.GET.get('id')})
+    else:
+        return render_to_response('assign/assignlist.html', {'demands':demands,'bugs': bugs, 'isheader': '0', "id": req.GET.get('id')})
+
+def deleteassign(req):
+    #删除任务
+    print req.GET.get('assignid')
+    T_DemandAssigned.objects.get(id=req.GET.get('assignid')).delete()
+    return HttpResponseRedirect('/assignlist/?id=' + req.GET.get('id'))
+
+def addassign(req):
+    #添加任务
+    if req.method=='GET':
+        project = T_Project.objects.get(id=req.GET.get('id'))
+        modules = T_Module.objects.filter(ProjectId=project)
+        demands=T_Demand.objects.filter(ModuleId__in=modules).filter(DemandStatus='未分配').order_by('Level')
+        bugs=T_Bug.objects.filter(ModuleId__in=modules).filter(BugStatus='未分配').order_by('Level')
+        members=T_ProjectMember.objects.filter(ProjectId=project)
+        for member in members:
+            name = members.MemberId.memberinfo['name']
+            setattr(member,'name',name)
+        return render_to_response('assign/assignadd.html',{'members':members,'demands':demands,'bugs':bugs,'id': req.GET.get('id')})
+    else:
+        members=req.POST.get('members').split(',')
+        demand=None
+        bug=None
+        if req.POST.get('demandid','')!='':
+            demand=T_Demand.objects.get(id=req.POST.get('demandid'))
+        if req.POST.get('bugid','')!='':
+            bug=T_Bug.objects.get(id=req.POST.get('bugid'))
+        with transaction.commit_on_success():
+            for member in members:
+                if member !='' & member !=None:
+                    T_DemandAssigned.objects.create(DemandId=demand,BugId=bug,ProjectMemberId=T_ProjectMember.objects.get(id=member))
+        return HttpResponseRedirect('/assignlist/?id=' + req.POST.get('id'))
+
+def assigndetail(req):
+    if req.method=='GET':
+        assign=T_DemandAssigned.objects.get(id=req.GET.get('assignid'))
+        if assign.BugId!=None:
+            logs=T_DemandBugLog.objects.filter(BugId=assign.BugId).order_by('-CreateTime')
+            for log in logs:
+                name = log.ProjectMemberId.MemberId.memberinfo['name']
+                setattr(log,'name',name)
+            return render_to_response('assign/assigndetail.html',{'type':'bug','assign':assign,'logs':logs,'id': req.GET.get('id')})
+        elif assign.DemandId!=None:
+            logs=T_DemandBugLog.objects.filter(DemandId=assign.DemandId).order_by('-CreateTime')
+            for log in logs:
+                name = log.ProjectMemberId.MemberId.memberinfo['name']
+                setattr(log,'name',name)
+            return render_to_response('assign/assigndetail.html',{'type':'demand','assign':assign,'logs':logs,'id': req.GET.get('id')})
+    else:
+        if req.POST.get('type')=='bug':
+            with transaction.commit_on_success():
+                member = T_Member.objects.get(UserID=req.COOKIES.get('userid'))
+                project = T_Project.objects.get(id=req.POST.get('id'))
+                promember = T_ProjectMember.objects.get(ProjectId=project, MemberId=member)
+                assign=T_DemandAssigned.objects.get(id=req.POST.get('assignid'))
+                T_DemandBugLog.objects.create(ProjectMemberId=promember,BugId=assign.BugId,LogContent=req.POST.get('LogContent'))
+                assign.BugId.BugStatus=req.POST.get('status')
+                assign.BugId.save()
+                return HttpResponseRedirect('/assignlist/?id=' + req.POST.get('id'))
+        else:
+            with transaction.commit_on_success():
+                member = T_Member.objects.get(UserID=req.COOKIES.get('userid'))
+                project = T_Project.objects.get(id=req.POST.get('id'))
+                promember = T_ProjectMember.objects.get(ProjectId=project, MemberId=member)
+                assign=T_DemandAssigned.objects.get(id=req.POST.get('assignid'))
+                T_DemandBugLog.objects.create(ProjectMemberId=promember,DemandId=assign.DemandId,LogContent=req.POST.get('LogContent'))
+                assign.DemandId.DemandStatus=req.POST.get('status')
+                assign.DemandId.save()
+                return HttpResponseRedirect('/assignlist/?id=' + req.POST.get('id'))
+
+def loglist(req):
+    logs=T_Log.objects.all()
+    for log in logs:
+        name = log.ProjectMemberId.MemberId.memberinfo['name']
+        setattr(log,'name',name)
+    return render_to_response('log/loglist.html',{'logs':logs})

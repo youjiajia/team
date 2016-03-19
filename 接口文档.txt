@@ -134,7 +134,7 @@ GET方式：
 　　	id：项目id
 　　返回：
 　　	bugs：需求model队列
-　　	Isheader：如果是项目负责人，可以添加，返回1否则返回0
+　　	isheader：如果是项目负责人，可以添加，返回1否则返回0
 	id：项目id
 14、bugadd.html	接口/bugadd/
 GET方式：
@@ -175,3 +175,57 @@ POST方式：
 		BugContent：bug内容
 	返回：
 		跳转到列表页面
+17、assignlist.html  接口/assignlist/
+方式：GET
+	需要：
+		id：项目id
+	返回：	
+		isheader：如果是项目负责人，可以添加，返回1否则返回0
+		id：项目id
+		demands：需求任务类list 在页面上显示demand.id,demand.DemandId.DemandName,demand.DemandId.DemandStatus,demand.DemandId.Level
+		bugs:bug任务类list 在页面上显示bug.id,bug.BugId.BugTitle,bug.BugId.BugStatus,bug.BugId.Level
+18、接口/deleteassign/
+方式：GET
+	需要：
+		assignid：需求id
+		id：项目id
+	返回：到列表页面
+19、assignadd.html 接口：/addassign/
+方式：GET
+	需要：
+		id：项目id
+	返回：
+		id：项目id
+		demands：需求任务类list 在页面上显示demand.id,demand.DemandId.DemandName,demand.DemandId.DemandStatus,demand.DemandId.Level
+		bugs:bug任务类list 在页面上显示bug.id,bug.BugId.BugTitle,bug.BugId.BugStatus,bug.BugId.Level
+		members：显示member.id,member.name
+方式：POST
+	需要：demand和bug俩个select中只能选择其中一个，有bug就不能有demand，反正亦然
+		members：member的id组成的字符串，用,隔开
+		demandid：需求id
+		bugid：bugid  bugid和需求id传一个即可
+		id：项目id
+	返回：直接到列表页
+20、assigndetail.html 接口/assigndetail/
+方式：GET
+	需要：
+		assignid：任务id
+		id：项目id
+	返回：
+		id：项目id
+		type：如果是'demand'则是需求类型的任务如果是'bug'就是bug类型的任务
+		assign：任务类list,如果type是需求类型，需要显示demand.DemandId.DemandName,demand.DemandId.DemandStatus,demand.DemandId.Level,demand.DemandId.DemandDescribe其中状态status可以修改
+			如果type是bug类型，需要显示bug.BugId.BugTitle,bug.BugId.BugStatus,bug.BugId.Level,bug.BugId.BugContent其中状态status可以修改
+		logs：日志类list 需要显示log.name,log.LogContent,log.CreateTime
+		最下面有输入框可以输入日志
+方式:POST
+	需要：
+		type：如果是'demand'则是需求类型的任务如果是'bug'就是bug类型的任务
+		id：项目id
+		assignid：任务id
+		status：修改的状态status
+		LogContent：填写的日志内容
+	返回：直接到列表页面
+21：loglist.html 接口/loglist/
+方式:GET
+返回:logs:日志类需要显示log.name,log.LogContent,log.CreateTime

@@ -40,6 +40,11 @@ urlpatterns = [
       url(r'^bugadd/$',bugadd),
       url(r'^bugdelete/$',bugdelete),
       url(r'^bugdetail/$',bugdetail),
+      url(r'^assignlist/$',assignlist),
+      url(r'^deleteassign/$',deleteassign),
+      url(r'^addassign/$',addassign),
+      url(r'^assigndetail/$',assigndetail),
+        #畅言论坛
         #畅言论坛
       url(r'^bbs/$',bbs),
         #备忘录
