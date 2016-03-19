@@ -347,7 +347,7 @@ def demanddelete(req):
     #删除需求
     print req.GET.get('demandid')
     T_Demand.objects.get(id=req.GET.get('demandid')).delete()
-    return HttpResponse('success')
+    return HttpResponseRedirect('/demandlist/?id='+req.GET.get('id'))
 
 def demanddetail(req):
     #需求详情
@@ -358,9 +358,9 @@ def demanddetail(req):
         projectmember=T_ProjectMember.objects.get(ProjectId=project,MemberId=member)
         demand=T_Demand.objects.get(id=req.GET.get('demandid'))
         if projectmember.isHead:
-            return render_to_response('demand/demanddetail.html',{'demand':demand,'isheader':'1','modules':modules})
+            return render_to_response('demand/demanddetail.html',{'demand':demand,'isheader':'1','modules':modules,"id":req.GET.get('id')})
         else:
-            return render_to_response('demand/demanddetail.html',{'demand':demand,'isheader':'0','modules':modules})
+            return render_to_response('demand/demanddetail.html',{'demand':demand,'isheader':'0','modules':modules,"id":req.GET.get('id')})
     elif req.method=='POST':
         module=T_Module.objects.get(id=req.POST.get('meduleid'))
         demand=T_Demand.objects.get(id=req.POST.get('demandid'))
@@ -370,7 +370,7 @@ def demanddetail(req):
         demand.Level=int(req.POST.get('Level'))
         demand.DemandDescribe=req.POST.get('DemandDescribe')
         demand.save()
-        return HttpResponse('success')
+        return HttpResponseRedirect('/demandlist/?id='+req.POST.get('id'))
 
 def documentlist(req):
     #文档列表页
@@ -408,7 +408,7 @@ def documentdetail(req):
         setattr(document,'uploader',name)
         return render_to_response('document/documentdetail.html',{'document':document,'id':req.GET.get('id')})
     else:
-        reqfile = req.FILES['file']
+        reqfile = req.POST['file']
         name=str(time.strftime('%Y%m%d%H%M%S'))
         path=os.path.join(basePath,"webStatic/upload/"+name+req.POST.get('filename'))
         project=T_Project.objects.get(id=req.POST.get('id'))
@@ -423,3 +423,58 @@ def documentdetail(req):
         document.DocumentUrl=path
         document.save()
         return HttpResponseRedirect('/documentlist/?id='+req.POST.get('id'))
+
+def testlist(req):
+    #测试列表
+    member = T_Member.objects.get(UserID=req.COOKIES.get('userid'))
+    project=T_Project.objects.get(id=req.GET.get('id'))
+    modules=T_Module.objects.filter(ProjectId=project)
+    tests=T_Test.objects.filter(ModuleId__in=modules).order_by('-TestStartTime')
+    promember=T_ProjectMember.objects.get(ProjectId=project,MemberId=member)
+    if promember.isHead:
+        return render_to_response('test/testlist.html',{'isheader':'1','tests':tests,"id":req.GET.get('id')})
+    else:
+        return render_to_response('test/testlist.html',{'isheader':'0','tests':tests,"id":req.GET.get('id')})
+
+def testdetail(req):
+    #测试详情
+    if req.method=='GET':
+        member = T_Member.objects.get(UserID=req.COOKIES.get('userid'))
+        project=T_Project.objects.get(id=req.GET.get('id'))
+        test=T_Test.objects.get(id=req.GET.get('testid'))
+        modules=T_Module.objects.filter(ProjectId=project)
+        promember=T_ProjectMember.objects.get(ProjectId=project,MemberId=member)
+        if promember.isHead && test.TestStatus!='已完成':
+            return render_to_response('test/testdetail.html',{'modules':modules,'test':test,'isheader':'1',"id":req.GET.get('id')})
+        else:
+            return render_to_response('test/testdetail.html',{'modules':modules,'test':test,'isheader':'0',"id":req.GET.get('id')})
+    else:
+        member = T_Member.objects.get(UserID=req.COOKIES.get('userid'))
+        project=T_Project.objects.get(id=req.POST.get('id'))
+        test=T_Test.objects.get(id=req.POST.get('testid'))
+        promember=T_ProjectMember.objects.get(ProjectId=project,MemberId=member)
+        test.TestContent=req.POST.get('TestContent')
+        test.TestName=req.POST.get('TestName')
+        test.TestStatus=req.POST.get('TestStatus')
+        test.save()
+        return HttpResponseRedirect('/testlist/?id='+req.POST.get('id'))
+
+def deletetest(req):
+    #测试删除
+    if T_Bug.objects.filter(TestId=T_Test.objects.get(id=req.GET.get('testid'))).count()==0:
+        T_Test.objects.get(id=req.GET.get('testid')).delete()
+    return HttpResponseRedirect('/testlist/?id='+req.GET.get('id'))
+
+def addtest(req):
+    #测试添加
+    if req.method == 'GET':
+        project=T_Project.objects.get(id=req.GET.get('id'))
+        modules=T_Module.objects.filter(ProjectId=project)
+        return render_to_response('/test/testadd.html',{'id':req.GET.get('id'),'modules':modules})
+    else:
+        member = T_Member.objects.get(UserID=req.COOKIES.get('userid'))
+        project=T_Project.objects.get(id=req.POST.get('id'))
+        promember=T_ProjectMember.objects.get(ProjectId=project,MemberId=member)
+        module=T_Module.objects.get(id=req.POST.get('ModuleId'))
+        T_Test.objects.create(ModuleId=module,ProjectMemberId=promember,TestName=req.POST.get('TestName'),TestContent=req.POST.get('TestContent'),TestStatus=req.POST.get('TestStatus'))
+        return HttpResponseRedirect('/testlist/?id='+req.POST.get('id'))

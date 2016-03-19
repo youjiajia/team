@@ -137,7 +137,7 @@ class T_Test(models.Model):
     TestName=models.CharField(max_length=100, verbose_name='测试名称')
     TestContent=models.TextField(verbose_name='测试内容')
     TestStatus=models.CharField(max_length=50, verbose_name='测试状态')
-    TestStartTime=models.DateTimeField(auto_now=True, verbose_name='测试开始时间')
+    TestStartTime=models.DateTimeField(auto_now_add=True, verbose_name='测试开始时间')
     TestEndTime=models.DateTimeField(auto_now=True, verbose_name='预计测试结束时间')
 
     def __str__(self):

@@ -78,3 +78,54 @@ filename：文件名
 		file：文件
 		filename：文件名
 	返回：直接跳转到文档列表页面
+9、testlist.html 接口/testlist/
+方式：GET
+	需要：
+		id：项目id
+	返回：
+		isheader：返回1代表可以删除修改，返回0不可以
+		tests：测试类list
+		id：项目id
+10、testdetail.html 接口/testdetail/
+方式：GET
+	需要：
+		id：项目id
+		testid：测试id
+	返回：
+		isheader：返回1代表可以删除修改，返回0不可以
+		test：测试类，需要显示测试类的TestName，ModuleId，TestContent，TestStatus，TestStartTime
+		id：项目id
+方式:POST 只可以修改TestContent，TestStatus，TestName
+	需要：
+		id：项目id
+		testid：测试id
+		modules：模块module数组
+		TestContent：测试内容
+		TestName：测试名称
+		TestStatus：测试状态
+	返回：
+		直接跳转到列表页面
+11、接口/deletetest/
+方式GET：
+	需要：
+		id：项目id
+		testid：测试id
+	返回：
+		直接跳转到列表页面
+12、testadd.html   接口/addtest/
+方式GET：
+	需要：
+		id：项目id
+	返回：
+		id：项目id
+		modules：模块列表
+方式POST：
+	需要：
+		id：项目id
+		ModuleId:模块id
+		TestName：测试名称
+		TestContent：测试内容
+		TestStatus：测试状态
+	返回：
+		直接跳转到列表页面
+
