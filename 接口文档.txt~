@@ -24,7 +24,7 @@ POST方式：
     返回：'success'
 3、接口/demanddelete/
 方式：GET
-需要：moduleid:模块id
+需要：demandid:模块id
 返回：success
 4、demanddetail.html 接口/demanddetail/
 方式:GET
@@ -53,6 +53,28 @@ POST方式：
 需要：id：项目id
 DocumentName：文档名字
 file：文件
+filename：文件名
 返回：直接跳转到文档列表页面
-7、
-
+7、接口/deletedocument/
+方式：get
+需要：documentid：文档id
+	id：项目id
+返回：直接跳转到文档列表页面
+8、documentdetail.html 接口/documentdetail/
+方式：GET
+	需要：documentid：文档id
+		id：项目id
+	返回：id：项目id
+		document：文档类
+		需要显示文档上传者document.uploader
+		文档下载链接：路径为document.DocumentUrl
+		文档名字:document.DocumentName
+		还需要重新上传链接
+方式:POST
+	需要：
+		id：项目id
+		documentid：文档id
+		DocumentName：文档名字
+		file：文件
+		filename：文件名
+	返回：直接跳转到文档列表页面

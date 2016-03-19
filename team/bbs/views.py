@@ -345,7 +345,7 @@ def demandadd(req):
 
 def demanddelete(req):
     #删除需求
-    T_Demand.objects.get(id=req.GET.get('moduleid')).delete()
+    T_Demand.objects.get(id=req.GET.get('demandid')).delete()
     return HttpResponse('success')
 
 def demanddetail(req):
@@ -362,7 +362,13 @@ def demanddetail(req):
             return render_to_response('demand/demanddetail.html',{'demand':demand,'isheader':'0','modules':modules})
     elif req.method=='POST':
         module=T_Module.objects.get(id=req.POST.get('meduleid'))
-        T_Demand.objects.get(id=req.POST.get('demandid')).update(ModuleId=module,DemandName=req.POST.get('DemandName'),DemandStatus=req.POST.get('DemandStatus'),Level=int(req.POST.get('Level')),DemandDescribe=req.POST.get('DemandDescribe'))
+        demand=T_Demand.objects.get(id=req.POST.get('demandid'))
+        demand.ModuleId=module
+        demand.DemandName=req.POST.get('DemandName')
+        demand.DemandStatus=req.POST.get('DemandStatus')
+        demand.Level=int(req.POST.get('Level'))
+        demand.DemandDescribe=req.POST.get('DemandDescribe')
+        demand.save()
         return HttpResponse('success')
 
 def documentlist(req):
@@ -377,8 +383,8 @@ def adddocument(req):
         return render_to_response('document/adddocument.html',{'id':req.GET.get('id')})
     else:
         reqfile = req.FILES['file']
-        path=os.path.join(basePath,"webStatic/upload/"+name+".xls")
         name=str(time.strftime('%Y%m%d%H%M%S'))
+        path=os.path.join(basePath,"webStatic/upload/"+name+req.POST.get('filename'))
         project=T_Project.objects.get(id=req.POST.get('id'))
         member = T_Member.objects.get(UserID=req.COOKIES.get('userid'))
         projectmember=T_ProjectMember.objects.get(ProjectId=project,MemberId=member)
@@ -386,4 +392,33 @@ def adddocument(req):
             for chunk in ExcelUpload.chunks():
                 destination.write(chunk)
         T_Document.objects.create(ProjectMemberId=projectmember,ProjectId=project,DocumentName=req.POST.get('DocumentName'),DocumentUrl=path)
+        return HttpResponseRedirect('/documentlist/?id='+req.POST.get('id'))
+
+def deletedocument(req):
+    #文档删除
+    T_Document.objects.get(id=req.GET.get('documentid')).delete()
+    return HttpResponseRedirect('/documentlist/?id='+req.GET.get('id'))
+
+def documentdetail(req):
+    #文档详情
+    if req.method=='GET':
+        document=T_Document.objects.get(id=req.GET.get('documentid'))
+        name=document.ProjectMemberId.MemberId.memberinfo['name']
+        setattr(document,'uploader',name)
+        return render_to_response('document/documentdetail.html',{'document':document,'id':req.GET.get('id')})
+    else:
+        reqfile = req.FILES['file']
+        name=str(time.strftime('%Y%m%d%H%M%S'))
+        path=os.path.join(basePath,"webStatic/upload/"+name+req.POST.get('filename'))
+        project=T_Project.objects.get(id=req.POST.get('id'))
+        member = T_Member.objects.get(UserID=req.COOKIES.get('userid'))
+        projectmember=T_ProjectMember.objects.get(ProjectId=project,MemberId=member)
+        with open(path, 'wb+') as destination:
+            for chunk in ExcelUpload.chunks():
+                destination.write(chunk)
+        document=T_Document.objects.get(id=req.POST.get('documentid'))
+        document.ProjectMemberId=projectmembers
+        document.DocumentName=req.POST.get('DocumentName')
+        document.DocumentUrl=path
+        document.save()
         return HttpResponseRedirect('/documentlist/?id='+req.POST.get('id'))
