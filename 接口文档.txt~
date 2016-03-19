@@ -128,4 +128,50 @@ filename：文件名
 		TestStatus：测试状态
 	返回：
 		直接跳转到列表页面
-
+13、buglist.html ：接口/buglist/
+GET方式：
+　　需要：
+　　	id：项目id
+　　返回：
+　　	bugs：需求model队列
+　　	Isheader：如果是项目负责人，可以添加，返回1否则返回0
+	id：项目id
+14、bugadd.html	接口/bugadd/
+GET方式：
+　　需要：
+　　	id：项目id
+　　返回：
+　　	id：项目id
+　　	modules：模块model数组
+	tests：测试model数组
+	
+POST方式：
+　　需要：
+	　　	id：项目id
+	　　	ModuleId：模块id
+		TestId：测试id 如果选了的话就传过来，没有选就不传
+		BugTitle：bug名称
+		BugContent：bug描述
+		Level：bug优先级
+		BugStatus：bug状态
+    返回：跳转到列表页面
+15、接口/bugdelete/
+方式：GET
+需要：bugid:模块id
+返回：跳转到列表页面
+16、bugdetail.html 接口/bugdetail/
+方式:GET
+	需要：id：项目id
+		bugid：bug的id
+	返回：bug：bug的model
+	      modules：模块module数组
+	      isheader：返回1代表可以删除修改，返回0不可以
+方式：POST
+	需要：
+		id：项目id
+　　		bugid：bug的id
+		BugStatus：bug状态
+		BugTitle：bug名称
+		BugContent：bug内容
+	返回：
+		跳转到列表页面

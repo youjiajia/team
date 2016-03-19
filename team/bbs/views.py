@@ -412,20 +412,19 @@ def adddocument(req):
     if req.method == 'GET':
         return render_to_response('document/adddocument.html', {'id': req.GET.get('id')})
     else:
-        reqfile = req.FILES['file']
+        reqfile = req.read()
         name = str(time.strftime('%Y%m%d%H%M%S'))
         path = os.path.join(basePath, "webStatic/upload/" +
-                            name + req.POST.get('filename'))
-        project = T_Project.objects.get(id=req.POST.get('id'))
+                            name + req.META.get('HTTP_FILENAME'))
+        project = T_Project.objects.get(id=req.META.get('HTTP_ID'))
         member = T_Member.objects.get(UserID=req.COOKIES.get('userid'))
         projectmember = T_ProjectMember.objects.get(
             ProjectId=project, MemberId=member)
         with open(path, 'wb+') as destination:
-            for chunk in ExcelUpload.chunks():
-                destination.write(chunk)
+            destination.write(reqfile)
         T_Document.objects.create(ProjectMemberId=projectmember, ProjectId=project,
-                                  DocumentName=req.POST.get('DocumentName'), DocumentUrl=path)
-        return HttpResponseRedirect('/documentlist/?id=' + req.POST.get('id'))
+                                  DocumentName=req.META.get('HTTP_DOCUMENTNAME'), DocumentUrl=path)
+        return HttpResponseRedirect('/documentlist/?id=' + req.META.get('HTTP_ID'))
 
 
 def deletedocument(req):
@@ -442,23 +441,22 @@ def documentdetail(req):
         setattr(document, 'uploader', name)
         return render_to_response('document/documentdetail.html', {'document': document, 'id': req.GET.get('id')})
     else:
-        reqfile = req.POST['file']
+        reqfile = req.read()
         name = str(time.strftime('%Y%m%d%H%M%S'))
         path = os.path.join(basePath, "webStatic/upload/" +
-                            name + req.POST.get('filename'))
-        project = T_Project.objects.get(id=req.POST.get('id'))
+                            name + req.META.get('HTTP_FILENAME'))
+        project = T_Project.objects.get(id=req.META.get('HTTP_ID'))
         member = T_Member.objects.get(UserID=req.COOKIES.get('userid'))
         projectmember = T_ProjectMember.objects.get(
             ProjectId=project, MemberId=member)
         with open(path, 'wb+') as destination:
-            for chunk in ExcelUpload.chunks():
-                destination.write(chunk)
-        document = T_Document.objects.get(id=req.POST.get('documentid'))
+            destination.write(reqfile)
+        document = T_Document.objects.get(id=req.META.get('HTTP_DOCUMENTID'))
         document.ProjectMemberId = projectmembers
-        document.DocumentName = req.POST.get('DocumentName')
+        document.DocumentName = req.META.get('HTTP_DOCUMENTNAME')
         document.DocumentUrl = path
         document.save()
-        return HttpResponseRedirect('/documentlist/?id=' + req.POST.get('id'))
+        return HttpResponseRedirect('/documentlist/?id=' + req.META.get('HTTP_ID'))
 
 
 def testlist(req):
@@ -569,7 +567,7 @@ def bugdelete(req):
     return HttpResponseRedirect('/demandlist/?id=' + req.GET.get('id'))
 
 
-def demanddetail(req):
+def bugdetail(req):
     # 需求详情
     if req.method == 'GET':
         member = T_Member.objects.get(UserID=req.COOKIES.get('userid'))
@@ -579,23 +577,20 @@ def demanddetail(req):
             ProjectId=project, MemberId=member)
         bug = T_Bug.objects.get(id=req.GET.get('bugid'))
         if projectmember.isHead:
-            return render_to_response('demand/demanddetail.html', {'demand': demand, 'isheader': '1', 'modules': modules, "id": req.GET.get('id')})
+            return render_to_response('bug/bugdetail.html', {'bug': bug, 'isheader': '1', 'modules': modules, "id": req.GET.get('id')})
         else:
-            return render_to_response('demand/demanddetail.html', {'demand': demand, 'isheader': '0', 'modules': modules, "id": req.GET.get('id')})
+            return render_to_response('bug/bugdetail.html', {'bug': bug, 'isheader': '0', 'modules': modules, "id": req.GET.get('id')})
     elif req.method == 'POST':
         member = T_Member.objects.get(UserID=req.COOKIES.get('userid'))
         project = T_Project.objects.get(id=req.POST.get('id'))
         projectmember = T_ProjectMember.objects.get(
             ProjectId=project, MemberId=member)
-        demand = T_Demand.objects.get(id=req.GET.get('demandid'))
+        bug = T_Demand.objects.get(id=req.GET.get('bugid'))
         module = T_Module.objects.get(id=req.POST.get('meduleid'))
-        demand = T_Demand.objects.get(id=req.POST.get('demandid'))
-        demand.ModuleId = module
-        demand.DemandName = req.POST.get('DemandName')
-        demand.DemandStatus = req.POST.get('DemandStatus')
-        demand.Level = int(req.POST.get('Level'))
-        demand.DemandDescribe = req.POST.get('DemandDescribe')
-        demand.save()
+        bug.BugStatus = req.POST.get('BugStatus')
+        bug.BugTitle = req.POST.get('BugTitle')
+        bug.BugContent = req.POST.get('BugContent')
+        bug.save()
         T_DemandBugLog.objects.create(
-            ProjectMemberId=projectmember, DemandId=demand, LogContent='更新测试')
-        return HttpResponseRedirect('/demandlist/?id=' + req.POST.get('id'))
+            ProjectMemberId=projectmember, BugId=bug, LogContent='更新BUG')
+        return HttpResponseRedirect('/bug/?id=' + req.POST.get('id'))

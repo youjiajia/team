@@ -36,6 +36,10 @@ urlpatterns = [
       url(r'^testdetail/$',testdetail),
       url(r'^deletetest/$',deletetest),
       url(r'^addtest/$',addtest),
+      url(r'^buglist/$',buglist),
+      url(r'^bugadd/$',bugadd),
+      url(r'^bugdelete/$',bugdelete),
+      url(r'^bugdetail/$',bugdetail),
         #畅言论坛
       url(r'^bbs/$',bbs),
         #备忘录
