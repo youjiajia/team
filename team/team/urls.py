@@ -26,6 +26,10 @@ urlpatterns = [
       url(r'^addmodule/$',addmodule),
       url(r'^deletemodule/$',deletemodule),
       url(r'^moduledetail/$',moduledetail),
+      url(r'^demandlist/$',demandlist),
+      url(r'^demandadd/$',demandadd),
+      url(r'^demanddelete/$',demanddelete),
+      url(r'^demanddetail/$',demanddetail),
         #畅言论坛
       url(r'^bbs/$',bbs),
         #备忘录

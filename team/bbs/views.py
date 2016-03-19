@@ -141,6 +141,8 @@ def project(req):
     if req.COOKIES.get('userid', '') == '':
         access_token = getToken(sCorpSecret)
         code = req.GET.get('code')
+        print access_token
+        print code
         urlreq = urllib2.Request(
             'https://qyapi.weixin.qq.com/cgi-bin/user/getuserinfo?access_token=' + access_token + '&code=' + code)
         urlresponse = urllib2.urlopen(urlreq)
@@ -267,9 +269,11 @@ def projectdetail(req):
 def moduleindex(req):
     #模块列表
     member = T_Member.objects.get(UserID=req.COOKIES.get('userid'))
-    modulelist=T_Module.objects.filter(ProjectId=T_Project.objects.get(id=req.GET.get('id')))
-    if T_Admin.objects.filter(MemberId=member,Department_ID=T_Project.objects.get(
-        id=req.GET.get('id')).Department_ID).count() != 0:
+    project=T_Project.objects.get(id=req.GET.get('id'))
+    modulelist=T_Module.objects.filter(ProjectId=project)
+    projectmember=T_ProjectMember.objects.get(ProjectId=project,MemberId=member)
+    if ((T_Admin.objects.filter(MemberId=member,Department_ID=T_Project.objects.get(
+        id=req.GET.get('id')).Department_ID).count() != 0) | projectmember.isHead)&(T_Demand.objects.filter(ModuleId__in=modulelist).count()==0):
         return render_to_response('module/modulelist.html', {"level": "admin","id":req.GET.get('id'),"modulelist": modulelist})
     else:
         return render_to_response('module/modulelist.html', {"level": "member", "id":req.GET.get('id'),"modulelist": modulelist})
@@ -297,8 +301,14 @@ def deletemodule(req):
 def moduledetail(req):
     #模块详情页
     if req.method=='GET':
+        member = T_Member.objects.get(UserID=req.COOKIES.get('userid'))
+        project=T_Project.objects.get(id=req.GET.get('id'))
         module=T_Module.objects.get(id=req.GET.get('id'))
-        return render_to_response('module/moduledetail.html',{'module':module})
+        projectmember=T_ProjectMember.objects.get(ProjectId=project,MemberId=member)
+        if ((T_Admin.objects.filter(MemberId=member,Department_ID=T_Project.objects.get(id=req.GET.get('id')).Department_ID).count() != 0) | projectmember.isHead)&(T_Demand.objects.filter(ModuleId=module).count()==0):
+            return render_to_response('module/moduledetail.html',{'module':module,'isheader':'1'})
+        else:
+            return render_to_response('module/moduledetail.html',{'module':module,'isheader':'0'})
     else:
         module=T_Module.objects.get(id=req.GET.get('id'))
         if T_Demand.objects.filter(ModuleId=module).count()==0:
@@ -308,3 +318,51 @@ def moduledetail(req):
             return HttpResponse('success')
         else:
             return HttpResponse('failure')
+
+def demandlist(req):
+#需求列表页
+    member = T_Member.objects.get(UserID=req.COOKIES.get('userid'))
+    project=T_Project.objects.get(id=req.GET.get('id'))
+    modules=T_Module.objects.filter(ProjectId=project)
+    demands=T_Demand.objects.filter(ModuleId__in=modules).order_by('DemandStatus','Level')
+    promember=T_ProjectMember.objects.get(ProjectId=project,MemberId=member)
+    if promember.isHead:
+        return render_to_response('demand/demandlist.html',{'demands':demands,'isheader':'1'})
+    else:
+        return render_to_response('demand/demandlist.html',{'demands':demands,'isheader':'0'})
+
+def demandadd(req):
+    #需求添加
+    if req.method=='POST':
+        member = T_Member.objects.get(UserID=req.COOKIES.get('userid'))
+        project=T_Project.objects.get(id=req.POST.get('id'))
+        projectmember=T_ProjectMember.objects.get(ProjectId=project,MemberId=member)
+        module=T_Module.objects.get(id=req.POST.get('meduleid'))
+        T_Demand.objects.create(ProjectMemberId=projectmember,ModuleId=module,DemandName=req.POST.get('DemandName'),DemandStatus=req.POST.get('DemandStatus'),Level=int(req.POST.get('Level')),DemandDescribe=req.POST.get('DemandDescribe'))
+        return HttpResponse('success')
+    elif req.method=='GET':
+        project=T_Project.objects.get(id=req.POST.get('id'))
+        modules=T_Module.objects.filter(ProjectId=project)
+        return render_to_response('demand/demandadd.html',{'id':req.GET.get('id'),'modules':modules})
+
+def demanddelete(req):
+    #删除需求
+    T_Demand.objects.get(id=req.GET.get('moduleid')).delete()
+    return HttpResponse('success')
+
+def demanddetail(req):
+    #需求详情
+    if req.method=='GET':
+        member = T_Member.objects.get(UserID=req.COOKIES.get('userid'))
+        project=T_Project.objects.get(id=req.POST.get('id'))
+        modules=T_Module.objects.filter(ProjectId=project)
+        projectmember=T_ProjectMember.objects.get(ProjectId=project,MemberId=member)
+        demand=T_Demand.objects.get(id=req.GET.get('demandid'))
+        if projectmember.isHead:
+            return render_to_response('demand/demanddetail.html',{'demand':demand,'isheader':'1','modules':modules})
+        else:
+            return render_to_response('demand/demanddetail.html',{'demand':demand,'isheader':'0','modules':modules})
+    elif req.method=='POST':
+        module=T_Module.objects.get(id=req.POST.get('meduleid'))
+        T_Demand.objects.get(id=req.POST.get('demandid')).update(ModuleId=module,DemandName=req.POST.get('DemandName'),DemandStatus=req.POST.get('DemandStatus'),Level=int(req.POST.get('Level')),DemandDescribe=req.POST.get('DemandDescribe'))
+        return HttpResponse('success')

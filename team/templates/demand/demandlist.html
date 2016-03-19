@@ -1,0 +1,13 @@
+<html>
+是否是项目负责人(项目负责人才能添加):{{isheader}}
+{% for demand in demands %}
+        <div>
+            所属项目id：demand.ModuleId.ProjectId.id<br/><br/>
+            需求id:demand.id<br/><br/>
+            所属模块：demand.ModuleId.ModuleName<br/><br/>
+            需求名称：demand.DemandName<br/><br/>
+            需求状态：demand.DemandStatus<br/><br/>
+        </div>
+        {% empty %}暂无需求
+        {% endfor %}
+</html>

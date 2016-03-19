@@ -1,0 +1,42 @@
+需求：
+1、demandlist.html ：接口/demandlist/
+GET方式：
+　　需要：
+　　	id：项目id
+　　返回：
+　　	demands：需求model队列
+　　	Isheader：如果是项目负责人，可以添加，返回1否则返回0
+2、Demandadd.html	接口/demandadd/
+GET方式：
+　　需要：
+　　	id：项目id
+　　返回：
+　　	id：项目id
+　　	modules：模块module数组
+POST方式：
+　　需要：
+	　　	id：项目id
+	　　	meduleid：模块id
+		DemandName：需求名称
+		DemandDescribe：需求描述
+		Level：需求优先级
+		DemandStatus：需求状态
+    返回：'success'
+3、接口/demanddelete/
+方式：GET
+需要：moduleid:模块id
+返回：success
+4、demanddetail.html 接口/demanddetail/
+方式:GET
+	需要：demandid：需求id
+	返回：demand：需求model
+	      modules：模块module数组
+	      isheader：返回1代表可以删除修改，返回0不可以
+方式：POST
+	需要：
+　　	demandid：模块id
+	meduleid：模块id
+	DemandName：需求名称
+	DemandDescribe：需求描述
+	Level：需求优先级
+	DemandStatus：需求状态
