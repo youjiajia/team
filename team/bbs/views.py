@@ -396,6 +396,7 @@ def adddocument(req):
 
 def deletedocument(req):
     #文档删除
+    print req.GET.get('documentid')
     T_Document.objects.get(id=req.GET.get('documentid')).delete()
     return HttpResponseRedirect('/documentlist/?id='+req.GET.get('id'))
 
