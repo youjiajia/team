@@ -1,0 +1,41 @@
+K 25
+svn:wc:ra_dav:version-url
+V 49
+/svn/webchat/!svn/ver/10/trunk/webchat/src/domain
+END
+Image.java
+K 25
+svn:wc:ra_dav:version-url
+V 60
+/svn/webchat/!svn/ver/10/trunk/webchat/src/domain/Image.java
+END
+Video.java
+K 25
+svn:wc:ra_dav:version-url
+V 60
+/svn/webchat/!svn/ver/10/trunk/webchat/src/domain/Video.java
+END
+Article.java
+K 25
+svn:wc:ra_dav:version-url
+V 62
+/svn/webchat/!svn/ver/10/trunk/webchat/src/domain/Article.java
+END
+Music.java
+K 25
+svn:wc:ra_dav:version-url
+V 60
+/svn/webchat/!svn/ver/10/trunk/webchat/src/domain/Music.java
+END
+Voice.java
+K 25
+svn:wc:ra_dav:version-url
+V 60
+/svn/webchat/!svn/ver/10/trunk/webchat/src/domain/Voice.java
+END
+BaseMessageOrEvent.java
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/svn/webchat/!svn/ver/11/trunk/webchat/src/domain/BaseMessageOrEvent.java
+END

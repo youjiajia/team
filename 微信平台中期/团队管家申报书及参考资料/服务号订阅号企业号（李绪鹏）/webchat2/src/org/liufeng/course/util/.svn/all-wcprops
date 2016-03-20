@@ -1,0 +1,23 @@
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/svn/webchat/!svn/ver/7/trunk/webchat2/src/org/liufeng/course/util
+END
+SignUtil.java
+K 25
+svn:wc:ra_dav:version-url
+V 80
+/svn/webchat/!svn/ver/7/trunk/webchat2/src/org/liufeng/course/util/SignUtil.java
+END
+MySignUtil.java
+K 25
+svn:wc:ra_dav:version-url
+V 82
+/svn/webchat/!svn/ver/7/trunk/webchat2/src/org/liufeng/course/util/MySignUtil.java
+END
+MessageUtil.java
+K 25
+svn:wc:ra_dav:version-url
+V 83
+/svn/webchat/!svn/ver/7/trunk/webchat2/src/org/liufeng/course/util/MessageUtil.java
+END

@@ -1,0 +1,41 @@
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/svn/webchat/!svn/ver/7/trunk/webchat2/src/org/liufeng/course/message/req
+END
+LinkMessage.java
+K 25
+svn:wc:ra_dav:version-url
+V 90
+/svn/webchat/!svn/ver/7/trunk/webchat2/src/org/liufeng/course/message/req/LinkMessage.java
+END
+ImageMessage.java
+K 25
+svn:wc:ra_dav:version-url
+V 91
+/svn/webchat/!svn/ver/7/trunk/webchat2/src/org/liufeng/course/message/req/ImageMessage.java
+END
+TextMessage.java
+K 25
+svn:wc:ra_dav:version-url
+V 90
+/svn/webchat/!svn/ver/7/trunk/webchat2/src/org/liufeng/course/message/req/TextMessage.java
+END
+BaseMessage.java
+K 25
+svn:wc:ra_dav:version-url
+V 90
+/svn/webchat/!svn/ver/7/trunk/webchat2/src/org/liufeng/course/message/req/BaseMessage.java
+END
+VoiceMessage.java
+K 25
+svn:wc:ra_dav:version-url
+V 91
+/svn/webchat/!svn/ver/7/trunk/webchat2/src/org/liufeng/course/message/req/VoiceMessage.java
+END
+LocationMessage.java
+K 25
+svn:wc:ra_dav:version-url
+V 94
+/svn/webchat/!svn/ver/7/trunk/webchat2/src/org/liufeng/course/message/req/LocationMessage.java
+END

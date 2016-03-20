@@ -1,0 +1,41 @@
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/svn/webchat/!svn/ver/7/trunk/webchat2/src/com/qq/weixin/mp/aes
+END
+AesException.java
+K 25
+svn:wc:ra_dav:version-url
+V 81
+/svn/webchat/!svn/ver/7/trunk/webchat2/src/com/qq/weixin/mp/aes/AesException.java
+END
+PKCS7Encoder.java
+K 25
+svn:wc:ra_dav:version-url
+V 81
+/svn/webchat/!svn/ver/7/trunk/webchat2/src/com/qq/weixin/mp/aes/PKCS7Encoder.java
+END
+WXBizMsgCrypt.java
+K 25
+svn:wc:ra_dav:version-url
+V 82
+/svn/webchat/!svn/ver/7/trunk/webchat2/src/com/qq/weixin/mp/aes/WXBizMsgCrypt.java
+END
+XMLParse.java
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/svn/webchat/!svn/ver/7/trunk/webchat2/src/com/qq/weixin/mp/aes/XMLParse.java
+END
+ByteGroup.java
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/svn/webchat/!svn/ver/7/trunk/webchat2/src/com/qq/weixin/mp/aes/ByteGroup.java
+END
+SHA1.java
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/svn/webchat/!svn/ver/7/trunk/webchat2/src/com/qq/weixin/mp/aes/SHA1.java
+END

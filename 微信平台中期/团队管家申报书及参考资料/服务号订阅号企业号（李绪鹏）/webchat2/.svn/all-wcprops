@@ -1,0 +1,17 @@
+K 25
+svn:wc:ra_dav:version-url
+V 38
+/svn/webchat/!svn/ver/6/trunk/webchat2
+END
+.project
+K 25
+svn:wc:ra_dav:version-url
+V 47
+/svn/webchat/!svn/ver/7/trunk/webchat2/.project
+END
+.classpath
+K 25
+svn:wc:ra_dav:version-url
+V 49
+/svn/webchat/!svn/ver/7/trunk/webchat2/.classpath
+END

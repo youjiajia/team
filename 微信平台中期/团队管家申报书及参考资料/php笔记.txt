@@ -1,0 +1,721 @@
+端口：1.一台机器可以有1-65535号端口
+      2.在实际开发中使用netstat -an查看机器有哪些端口在监听
+      	端口越少越安全
+	netstat -anb可以 发现是哪个程序在监听，从而关闭。
+      3.一台80端口被Apache监听，则该端口不能再被其他应用程序监听
+      4.端口分为有名端口1-1024号，其他端口可以自行分配
+Apache如何去配置端口
+	1.Apache软件配置是在httpd.conf文件中配置，该文件在Apache安装目录下conf
+		修改在httpd.conf 的Listen 80
+		也可以监听多个端口
+	注意：修改完后要重启服务器
+	mpm：mutil processing module多重处理模块
+	apr：可移植运行库
+Apache配置虚拟目录
+  1添加结点
+	<IfModule dir_module>
+	#direcotory相当于欢迎页面
+	DirectoryIndex news.html index.html index.htm index.php
+	#你的站点别名
+	Alias/moblog"D:/myblog"
+	<Directory d:/myblog>
+	#这是访问权限设置（表示对d盘下面的myblog文件权限设置）
+	Order allow,deny
+	Allow from all
+	</Directory>I
+	</IfModule>
+  2注销主目录doucumentroot路径
+  3.测试
+	http://localhost/myblog/news.html
+  4.设置欢迎页面 加news.html
+  5.关于Apache访问权限的设置
+      	order allow,deny表示，先允许所有的ip访问，deny表示拒绝所有，allow from 	all表示允许所有
+  6.虚拟主机的配置
+	步骤：
+	1.在httpd.conf文件中找到Virtual hosts将下面的Include前注释去掉
+	2.在httpd-vhosts.conf中做配置
+		#配置我们自己的虚拟主机
+		<VirtualHost 127.0.0.1:80>
+			DocumentRoot"d:/myblog"
+			#这里配置欢迎首页面
+			DirectoryIndex index.html index.htm index.php
+			<Directory />
+			options FollowSymLinks
+			#不许别人修改我们的页面
+			AllowOverride None
+			#设置访问权限
+			order allow,deny
+			Allow from all
+			</Directory>
+		</VirtuslHost>
+	3.修改hosts文件
+php环境搭建：
+	Apache载入PHP处理模块：
+		在httpd.conf目录下加入以下代码：
+		LodadModeule php5——module~php安装路径/php5apache2——2.dll  
+		//phpinidir这个用于指定php的ini文件，该文件时对pbp的一些配置
+		PHPIniDir“~php模块安装路径”
+		//这个配置表示，当有一个资源是*.php的时候就由php来处理
+		AddType application/x-httpd-php .php .phtml 
+	吧php.ini-development文件改成php.ini
+	在php.ini中指定扩展路径模块
+		找到extension_dir加入
+			#这里我们要指定php扩展库路径
+			extenson_dir="C:/myenv/php-5.3.5/ext"
+	测试是否成功
+		写这段代码在apache/htdocs目录下
+		<?php phpinof() ?>
+!!!如果只写了$a,但是没有赋值，用var_dump($a);得到a为null
+php页面相互调用的知识点：
+	（1）a.php页面要使用b.php定义的函数，可以使用如下指令：
+		require,require_once,include,include_once
+		require用法：<?php require('要引入的文件名')；require						$filePath;require '要引入的文件名（路径）'?>
+		require和require_once的区别：前者遇到已包含文件，后者会判断是否已			经包含过了，如果包含过了，则不再包含文件。
+		include和require区别：include如果出现了错误，会继续执行，而			require会终止。
+		！！！我们做项目时基本上引用require_once
+		!!!要在函数内使用外层的$a 则在函数内加global $a;
+	(2)如果在函数中我们不希望使用某个变量，或者希望彻底不再使用某个变量，可用		unset(变量名);将该变量彻底删除
+	（3）在php函数中，我们可以给某些参数，赋一个默认的值	
+	（4）php在传递变量的时候，默认是值传递，如果需要引用（地址）传递，可以使			用&变量名
+	（5）php中的常量：
+		1、定义常量前不需要$
+		2、常量一旦定义，测不能修改其值
+		3、常量在定义的时候，就需要它赋初值
+		4、常量可以通过define或者const来定义
+		5、常量的名称，我们一般说是，全部大写，然后用下划线间隔
+		6、在程序中我们不希望某个值变化，就考虑用常量。
+	（6）goto标签:常见用法是用来跳出循环或者switch，可以替代多层的break
+		gota a;
+		echo'aa';
+		a:
+		echo'bb';
+		执行结果：bb
+	（7）位运算符向左移一相当于乘2，右移相当于除2
+		！！！计算机运算时，都是用补码来运算的
+数组的使用
+	（1）创建数组的方法：$数组名=array（值，....）；
+				$数组名['下标名']=元素 或者$arr=array("下标名"=>"					北京"，...); //在默认情况下我们元素的下标，是从0				开始编号的，但是实际上，也可以自己制定
+		foreach（$arr（数组名） as $key=>$val）{echo $key."=".$val."<br 							/>"}(适用范围更加广泛)
+		注意事项：如果我们创建一个数组的时候没有给某个元素指定下标，php就			会自动的用目前最大的那个下标值，加上一作为该元素的下标。如果该下			标已经有啦，则会覆盖该值。
+	（2）我们通常可以使用print_r（数组名）；来显示所有的数组情况
+		使用var_dump(数组名);可以更加详细的显示数组的信息。
+	（3）一维数组的使用陷阱
+		$arr[bar]="hdfls";
+		echo$arr[bar];这样使用危险；
+	（4）一维数组的几个重要方法：
+		使用count（$数组名）方法统计数组的条数
+		使用is_array（$数组名）函数判断是否为数组
+		print_r()和var_dump()可以查看数组信息
+		拆封字符串explode(" ",$str);返回数组，第一个参数表示按什么拆分
+		sort函数用于排序
+		round（）用于四舍五入
+		unset()函数允许删除数组中的某个键值（关键字也删除）。
+	（5）在某个页面中不提示notice错误，在该页面中加上：
+		error_reporting(E_ALL^E_NOTICE);
+		！！从效率上看 冒泡法<选择排序法<插入排序法
+!!!php中的构造方法 函数名与类名一样，php5中还增加了另外一种方式：					function _construct(){} //优先选择这种
+	析构方法：function _destruct(){}//析构函数会自动被调用，主要用于销毁资源
+					，析构方法调用的顺序是先创建的对象后被销								毁（php5后才有的析构方法）
+		析构方法调用：1.当程序退出的时候
+			      2.当一个对象成为垃圾对象时候(当一个对象没有引用指向它时)
+！！！php垃圾回收机制：只要成为垃圾，立马回收
+全局变量的使用：在程序中都可以使用的变量就称为全局变量 global $global_a;//定义了一个全局变量
+							//先定义才能赋值，使用时要先声明
+静态变量的使用：public static $nums=0;public function join_game(){self::$nums=9;}
+	访问方式：类名::$nums
+	静态变量不和对象相关联
+静态方法允许使用对象->方法名来使用
+	静态方法只能操作静态变量
+继承的基本语法 class 类名 extends 父类名{//写自己需要的属性和方法}
+	不调用父类构造方法
+		如果需要访问，可用类名::方法名（） parent::方法名（）来显式调用父类方法
+函数重载写法与Java不同：php的魔术方法
+	1.__call（$method,$p）//当一个对象调用某个方法，而该方法不存在，则系统自动调用__call
+		$method是函数名，$p是参数数组
+		通过if判断来实现函数重载
+	2.魔术常量
+		__LINE__//输出当前行数
+		__FILE__//查看在哪个文件（绝对路径）
+		__DIR__//把文件路径写出（没有文件名）
+		__CLASS__//在类中才能使用，输出类名
+		__FUNCTION__//在函数中使用，输出函数名
+		__METHOD__//提交方式
+		__NAMESPACE__//M命名空间
+	3.方法的覆盖（子类覆盖父类方法）
+		方法名和参数类型必须和父类一致
+		在实现方法覆盖时，访问修饰符可以不一样，但是子类的访问范围必须大于父类
+抽象类：设计原因-本身不需要实例化，有利于项目设计者设计类
+	方法：类前加上abstract,方法可以加也可以不加，抽象方法没有方法体；（没有大括号分号结尾）
+		如果一个类继承了某个抽象类，那他必须实现抽象类中的所有抽象方法，除非他自己声明为		抽象类。
+接口：interface 接口名{//属性//方法}//声明一些接口，供其他类来实现
+	使用 class 类名 implements 接口{}
+	注意：1.接口不能被实例化
+	      2.接口中所有方法不能有主体
+	      3.一个类可以实现多个接口，逗号隔开 public class Aa implements 接口1，接口2{}
+	      4.接口中属性必须是常量（const A=90;），默认是public
+		5.接口中的方法比现实是public，默认是public
+		6.一个接口不能继承其他类，但是可以继承别的接口 interface 接口名 extends 接口1，											接口2{}
+final关键字使用
+	1.如果我们希望某个类不被其他的类来继承（安全考虑），可以使用final
+	2.如果我们希望某个方法不被子类改写，可以使用final来修饰我们的方法
+	3.final关键字不能去修饰属性
+const概念
+	1.当不希望一个次元变量去修改，希望该变量的值是固定不变的可以用const去修饰该成员变量
+	2.常量不加$ 使用const 常量名=值 访问：类名：：常量名；或接口名：：常量名
+	3.const在定义时，不加修饰符，而且必须给初值
+	4.常量是属于一个类的，而不是某个对象的
+php错误处理三种机制：
+	1.die
+		if(!file_exists("aaa.txt")){die("文件不存在");}else{//打开文件操作}
+		file_exists("aaa.txt") or die("文件不存在");	
+	2.创建自定义错误函数
+		function my_error($errno,$errmes){echo"错误信息";exit();} //自定义一个函数
+		set_error_handler("my_error",E_UERR_WARNING);//改写ert_error_handler处理器
+		$fp=fopen("aa.txt","r");
+	3.错误触发器
+		function my_error($errno,$errmes){echo "错误号为".$errno;}//定义自定义错误函数
+		set_error_handler("my_error",E_UERR_WARNING);//指定E_UERR_WARNING错误级别函数
+		$age=700;
+		if($age>120){trigger_error("输入年龄过大",E_UERR_WARNING);exit();
+ 			//调用触发器同时指定错误级别 
+			}
+	4.php错误日志保存
+		function my_error($errno,$errmes){$err_info="错误号是：".errno."__".$errmes;
+						echo $err_info;
+						//将错误信息保存，\r\n表示向文件输入一个回车换行						error_log($err_info."\r\n",3,"myerr.txt");
+						}
+		设置时区 date_default_timezone_set("PRC");
+	5.php中的异常处理
+		try{}catch(Exception e){echo $e->getMessage();}
+		!!!当异常被抛出时，其后的代码不会继续执行php会尝试查找匹配的“catch”代码块
+		自定义顶级异常处理器
+			function my_exception($e){echo "我是顶级异常处理".$e->getMessage();}
+			//修改默认顶级异常处理函数
+			set_exception_handler("my_exception");
+		自定义异常类 需要extends Exception{}
+		由于历史原因，一些函数不抛异常
+http协议：
+	1.http协议建立在tcp/ip协议基础上
+	2.我们的web开发的数据传输都是依赖于http协议
+	3.全称是 超文本传输协议
+	http请求（request）
+		基本结构：
+			请求行  消息头  消息体
+		GET/test/hello.html HTTP/1.1  //表示发送的get请求和请求资源，还有http协议版本
+		Accept:*/* //表示客户端可以接受任何数据
+		Referer:http://localhost:80/test/... //表示从哪里来（防盗链）
+		Accept-Language:zh-cn //页面语言
+		User-Agent:Mozilla/4.0 //告诉服务我的浏览器内核，操作系统
+		Accetp-Encoding:zip,deflate //表示接受什么样的数据压缩格式
+		Host:localhost:80 //主机：80
+		Connection:Keep-Alive //表示不要立即断掉我们的请求
+	在预定义全局变量 里面的$_SERVER可以查看 print_r($_SERVER)可以看到信息
+		重要的信息：
+			HTTP_HOST  //获取主机名
+			REMOTE_ADDR //访问该页面的ip
+			DOVUMENT_ROOT //可以获取apache的主目录
+			REQUEST_URI //可以获取请求的资源名
+	post和get的区别：
+		1.安全性 get请求的数据会显示在地址栏上，post请求的数据在http协议的消息体里面
+		2.从可以提交数据大小看
+			2.1http协议本身没有限制数据大小
+			2.2浏览器在对get和post请求做显示，get请求数据2k+35  ，post没有限制
+		3.get提交能更好的添加到收藏夹
+	！！！http请求不是一成不变的，是根据实际情况的，比如REFEER 
+			//防止非法盗链
+			if(isset($_SERVER['HTTP_REFERER'])){
+				//取出来判断是否以。。开头
+				if(strpos($_SERVER['HTTP_REFERER'],"http://localhost/http")==0{
+					//显示信息
+				}
+			}
+	http响应：代表服务器给浏览器回送的数据，同时告诉浏览器怎么处理数据
+		HTTP/1.1 200 OK		//200ok表示客户端请求成功
+		Server:Microsoft-IIS/5.0	//表示浏览器服务器的情况
+		Date:Thu,13 Jul 2000 05:46:53 GMT	//告诉浏览器请求当前时间
+		Last-Modified:Tue,13 Jul 2000 05:46:53 GMT	// 告诉浏览器请求最后更新时间
+		Content-Length:2291	//表示回送数据有2291个字节
+		Content-Type:text/html		//文档类型
+		Cache-control:private		//缓存
+		Content-Encoding:gzip		//支持的压缩算法
+		Refresh:1;rul=http://www.baidu.com	//告诉浏览器，间隔一秒，重定向到百度
+		
+	状态码的使用：
+		302：header("Location:b.php")//header可以向http响应头写入信息，这句话向客户端发						送了302状态码，告诉浏览器重新访问b.php
+		404：该页面不存在
+		304：告诉浏览器有缓存
+		!!!隔一段时间去跳转：header("Refresh:3;url://www.baidu.com");
+		!!!通过http响应控制页面缓存，默认情况下浏览器会缓存页面
+			通过header来来禁用缓存（ajax）
+			header("Expires:-1");header("Cache-Control:no-cache");
+			header("Pragma:no-cache");
+		!!!演示文件下载!!!绝对路径比相对路径快
+		function down_file($file_name,$file_sub_dir){
+			//参数文件名和下载文件的子路径“/xxx/xxx”
+			//原因php文件函数比较古老，需要对中文转码gb2312
+			$file_name=iconv("utf-8","gb2312",$file_name);
+			$file_path="./down/".$file_name;
+			//如果使用绝对路径
+			//$file_path=$_SERVER['DOCUMENT_ROOT'].$file_sub_dir.$file_name;
+			//打开文件
+			if（!file_exists($file_path)）{echo"文件不存在";return}
+			$fp=fopen($file_path，"r");
+			//获取下载文件的大小
+			$file_size=filesize($file_path);
+			//下载头,返回文件
+			header("Content-type:application/octet-stream");
+			//按照字节大小返回
+			header("Accept-Range:bytes");
+			//返回文件大小 
+			header("Accept-Length:$file_size");
+			//客户端的弹出对话框名称对应文件名
+			header("Content-Disposition:attachment;filename=".$file_name);
+			//向客户端回送数据
+			$buffer=1024;
+			//这句话判断文件是否结束
+			while(!feof($fp)){
+				$file_data=fread($fp,$buffer);
+				echo $file_data;	//部分数据给浏览器
+			}
+			//关闭文件
+			fclose($fp);
+		}
+	乱码的解决方案
+	1.<meta http-equiv="content-type" content="text/html;charset=utf-8"/>
+	2.<?php header("Content-Type:text/html";charset=utf-8);>
+php数据库编程
+	三种方式：
+		1.mysql扩展库
+		2.mysqli扩展库
+		3.pdo
+	！！！mysql扩展库和mysql数据库的区别
+		1.mysql数据库是用于存放数据
+		2.mysql数据库三层结构示意图
+			mysql扩展库发给dbms（数据库管理系统），dbms再操作数据库
+		3.mysql扩展库是一堆函数，是php设计者提供给程序员用于完成对mysql数据库的crud操作
+	启用mysql扩展库
+		在php.ini文件中extension=php_mysql.dll前分号去掉
+		可以通过<?php phpinfo()?>可以查看当前php支持什么扩展库
+		创建一张用户表
+			create table user1(
+			id int primary key auto_increment,
+			name varchar(32) not null,
+			password varchar(64) not null,
+			email varchar(128) not null,
+			age tinyint unsigned not null
+			)
+		预先加入数据  !!!md5加密函数：把明文加密成密文
+			insert into user1 (name,password,email,age) values ('zs',md5						('123456'),'zs@souhu.com',30)
+		php程序mysqlDemo1.php
+			细节：
+			1.使用完$res结果集后，一定要及时释放资源
+			2.mysql_close()如果没有的话，系统也会自动关闭
+			3.从$res获取行数据的时候，除了mysql_fetch_row($res),还有三个方法：
+				mysql_fetch_row($res)   返回索引数组（推荐）
+				mysql_fetch_assoc($res)  返回一个关联数组（写入字段名）
+				mysql_fetch_array($res)	 返回索引数组和关联数组
+				mysql_fetch_object($res)  返回一个对象把一行数据当做一个对象返回
+				mysql_fetch_field($res)  返回表头信息
+		将对数据库的操作封装成一个工具类SqlTool
+		其他函数：
+			得到行数：$rows=mysql_affected_rows($conn);
+			得到列数：$colums=mysql_num_fields($res);
+			得到每一个字段名:$field_name=mysql_field_name($res,$i);
+			得到上一步insert所产生的id：mysql_insert_id($conn);
+			!!!select 的where语句后加limit 0,1就返回一条数据
+	使用mysqli扩展库去操作mysql数据库
+		mysql扩展库和mysqli扩展库的比较：
+			1.mysqli的稳定性和安全性，效率有所提高
+			2.mysqli提供了面向对象的编程风格，同时提供了面向过程的编程风格
+		使用步骤：
+			1.配置php.ini中的extension=php_mysqli.dll;
+			....
+	!!!在mysqli扩展中，也提供了四种方式获取mysqli result结果，与mysql扩展用法相同
+	！！！mys的sql语句的特别说明
+		如果操作的字段类型是string型，则要求我们用‘’包括
+		如果操作的字段类型是数值型，则可用可不用
+	批量执行sql语句
+		批量执行dml语句
+			$sql="sql1;sql2;..."
+			mysqli:multi_query($sqls)
+		批量执行dql语句
+			作用是可以一次性的取回多个结果集
+			if($res=$mysqli->multi_query($sqls)){
+				do{//从连接真取出第一个结果集
+					$result=$mysqli->store_result();
+					//显示mysqli result对象
+					while($row=$result->fetch_row()){
+						foreach($row as $key => $val()){
+							echo"--$val";
+						}
+						echo"<br/>";
+					}
+					//及时释放$result
+					$result->free();
+					if(!$mysqli->more_results()){break;}
+					echo"<br/>";
+				}
+				while($mysqli->next_result())
+				//关闭资源
+				$mysqli->close();
+			}
+	事物：事物用于保证数据的一致性，由一组相关的dml语句组成，改组语句要么全部成功，要么全部				失败。
+		$mysqli->autocommit(false);//将提交设为false，事物一旦提交就没有机会回滚
+		if(!$b1||!$b2){
+			echo "失败，回滚".$mysqli->error;
+			//回滚
+			$mysqli->rollback();
+		}else{
+			//提交
+			$mysqli->commit();
+		}
+	在mysql控制台也可以使用事物来操作
+		1.start transaction;//开启事物
+		2.savepoint b;//设定保存点b
+		3.rollback to b;//回到保存点b（其他保存点删除)
+		4.提交commit
+		事物控制acid特性:原子性，一致性，隔离性，持久性
+	mysqli的预处理技术 mysqli stmt
+		演示：preparedStatement.php
+php中预定义超全局变量
+	1.全局变量 global $a;
+	2.超全局变量 
+		除了有全局变量的特点外，可以无需声明，直接使用
+		原因是为了让程序员更加方便快捷的写出php程序
+	3.php提供了9种
+		1.$_GET：通过URL参数传递给当前脚本的变量的数组
+			（1）浏览器通过超链接传送给服务器
+			（2）浏览器通过表单传信息给服务器
+			示例：echo $_GET['name'];
+			!!!ie5,6单数中文乱码问题解决方法：
+				使用urlencode():$str=urlencode("北京好");
+					和urldecode():echo urldecode($_GET['city']);(php自动转了						)
+			！！！绝对不要启用register_globals 需要register_globals=Off
+		2.$_POST	通过该方式提交的数据，会封装发到$_POST超全局数组中
+			 举例globals
+			
+		3.$_REQUEST：可以包括$_GET/$_POST/$_COOLIE数组的信息
+			不要经常使用这个
+			如果不确定get/post可以这样：
+				if($_SERVER['REQUEST_METHOD']=="POST"){$echo$_POST['名字'];}
+				else if($_SERVER['REQUEST_METHOD']=="GET"){...}
+		4.$_SERVER
+			主要包含了Http请求行和消息头的信息，同时还有服务器自己的一些信息 
+		5.$_ENV
+			该全局数组可以获取环境变量，在php5.3中默认禁用，但是你可以在php.ini文件					中启用variables_order="EGPCS"
+		6.$_FILE
+		7.$_COOKIE
+		8.$_SESSION
+		9.$_GLOBALS:包含了全部变量的全局组合数组。变量的名字就是数组的键，同时也包含自定			义的全局变量
+mysql万能密码：bb' or =='1 或者 33 union select * from users
+	万能用户名：xx'union select * from users/* 或者 33uncion select * from users/*
+    解决办法：
+	①在服务器中配置magic_quotes_gpc设置on,在php.ini文件中修改
+	$sql="select * from users where username='$username' and password='$password'";的万能密	码和用户名就失效了。当我们设置成on后，服务器就会对所有的‘’加入\转义
+	②密码比对
+	思想：首先通过用户输入的用户名去调查数据库，如果查到用户对应的密码，则和用户提交的密码比	对，如果相同则用户合法，反之该用户非法。
+	③pdo
+	在php.ini中打开extension=php_pdo_mssql.dll
+	使用pdo的方式预处理来防止注入
+		$myPdo=new PDO("mysql:host=localhost;port=3306;dbname=spdb","root","");
+		$myPdo->exec("set names utf8");
+		$pdoStatment=$myPdo->prepare($sql);
+		$pdoStatment->execute(array($username,$password));
+		$res=$pdoStatement->fetch();
+!!!对关键字进行过滤addslashes($keyWord);
+		防止sql查询攻击：
+			$keyWord=addslashes($keyWord);
+			$keyWord=str_replace("%","/%",$keyWord);
+			$keyWord=str_replace("_"."/_",$keyWord);
+xml文件的作用： ①可以使用程序间通讯的标准（ajax）
+		②可以作为配置文件
+		③可以作为小型数据库
+	xml语法：文档声明<?xml version="1.0" encoding="utf-8" standalone="no"?>//一般不管stand..
+		根元素//把所有文件都包起来的元素
+		属性 如果属性值中有双引号，使用实体引号
+			基本语法：<标签  属性名=“属性值” 属性名=“属性值”  属性名=“属性值”>
+			xml提供了五个实体引号：
+			&lt;  <
+			&gt;  >
+			&amp;  &
+			&apos; '
+			&quot; "
+			!!!不要在同一个标签中有相同属性名
+			!!!注释语法不能重叠 <!-- 注销内容-->
+		CDATA的使用： xml文件中的某个内容包含特殊字符时使用
+				<内容><!CDATA[元素]></内容>
+		xml中的处理指令PI:
+			<!--xml文件也可以使用css来修饰，使用pi-->
+			<?xml-stylesheet- type="test/css" href="classes.css"?>
+		常用的约束技术：①dtd②Schema
+		dtd讲解
+			主要用处：约束xml文件，也可以去约束HTML，XHTML文件...
+			<!--引入dtd-->
+			<!DOCTYPE 根元素名 SYSTEM “写dtd的路径”/>
+			classes2.dtd  :
+				<!ELEMENT 班级（学生+）>  //加号表示至少有一个
+				<!ELEMENT 学生（名字，年龄，介绍）>
+				<!ELEMENT 名字（#PCDATA）>
+				<!ELEMENT 年龄（#PCDATA）>
+				<!ELEMENT 介绍（#PCDATA）>
+			编程校验xml文档正确性   使用工具：Microsort.XMLDOM
+				<script language="javascript">
+				//创建xml解析器
+					var xmldoc=new ActiveXObject("Microsoft.XMLDOM");
+				//开启xml校验
+					xmldoc.validateOnParse=true;
+				//指定对哪个xml文件校验
+					xmldoc.load("classes2.xml");
+				//如果有错误信息，则输出
+					document.write(“错误信息=”+xmldoc.parseError.reason						+"<br/>");
+					document.write("错误的行号"+xmldoc.parseError.line				+"<br/>");
+				</scrpt>
+			将外部dtd代码加到xml内部：
+				将SYSTEM “写dtd的路径”改为[文件内容]
+				内外部dtd将[内容]写在路径后面
+			在xml文件中引入dtd文件的两种方式：
+				①本地引用
+				<!DOCTYPE 根元素 SYSTEM "被引入的dtd文件的路径">
+				②引入一个公开的dtd
+				<!DOCTYPE 文档根结点 PUBLIC "DTD名称" "DTD文件的URL">
+			!!!名字后加*号，表示该对象可以出现0到多次
+				加？，表示该对象可以出现0或1次
+				，代表顺序，用来控制顺序
+				|表示选择
+			dtd文件中属性列表说明：
+			 基本语法：<!ATTLIST 元素名字
+					属性名字 类型 属性特点
+					属性名字 类型 属性特点...
+				   >
+			属性特点：#REQUIRED 必须有
+				  #IMPLIED 可有可无
+				  #FIXED value 该属性的值是默认值
+				  #DEFAULT value 默认值
+			属性类型：CDATA   属性值可以是字符或数字
+				  ID	表示属性值是唯一的，要以字母开头写
+				  IDREF/IDREFS  id引用
+				  Enmerated    枚举
+				  ENTITY/ENTITIES  实体
+				!!!在声明后，就加属性，就近原则
+			实体定义：①引用实体②参数实体
+				（在dtd中定义一个引用实体，在xml文件中使用）
+				①<!ENTITY 实体名 “内容”>
+				在xml文件中：&实体名;
+				示例：<!--定义一个引用实体，建议大家把引用实体的定义放在前面-->
+				      <!ENTITY intro "这是一个介绍">
+				②<!ENTITY % 实体名称 “实体内容”>
+				在dtd文件中自己使用：%实体名称;
+				示例：<!--定义一个参数实体，建议大家把引用实体的定义放在前面-->
+				      <!ENTITY %sName "名字">
+					在后面使用：&实体名
+	php技术对xml文件进行操作：①php dom②php结合xpath操作xml③Simplexml
+		dom：文档对象模型，把一个文件看做一个对象模型，然后通过对象的方式来操作xml文件
+		xpath：phpdom技术可以跨层取出，但是不能保持层次关系，使用xpath可以更好解决
+			设计核心思想：可以通过xpath迅速简捷的定位希望查找的节点
+		Simplexml:以面向对象的方式来操作xml
+			simplexml可以直接装载到string字符串
+				//<<xml  xml是用于简单处理字符串中有“‘的情况
+！！！在body上加<base target="_blank">
+zend studio常用快捷键和调试功能的介绍
+	1.提示符助手快捷键 alt+/
+	2.复制当前行 ctrl+alt+下光标
+	3.删除当前行 ctrl+d
+	4.加注释的快键键
+		块注释：shift+ctrl+\ 取消:shift+ctrl+/
+		行注释：ctrl+/ 按第二次取消
+	5.调试php代码的快捷键
+		调试：为了发现代码的错误，可以逐行执行代码，同时看到变量的变化，这个过程称为太欧			式过程，来发现隐藏的错误。
+		断点：f5跳入 f6跳入（继续执行）f7跳出（函数跳出）
+开发：需求分析->设计阶段->编码阶段->测试阶段->发布维护阶段
+	需求阶段：需求设计人员/项目经理
+	设计阶段：技术人员（架构师，组长，程序员）->设计数据库
+	开发阶段:组长，程序员
+	测试人员:测试人员
+	发布阶段：实施人员（实施工程师）
+	维护阶段：开发人员
+ 	美工（ps画图）->网页前段人员（html）->客户
+！！！开发时要跳转，在header后加exit（）；
+！！！分页：
+	必须变量：
+		$pageNow->显示第几页 [用户输入]
+		$pageCount->共有几页 [计算出的]
+		$rowCount->共有多少条记录[数据库获取]
+		$pageSize->每一页显示几条记录[程序员自己指定]
+MVC基本概念
+	①mvc是一种软件设计模式->套路
+	②解释每个字母的含义
+		m ：model模型，处理业务逻辑
+		v:视图层 
+		c：控制器：接手用户请求，并调用某个service方法
+	③核心思想：强制程序猿在编写项目的时候，吧数据的输入/数据的处理/数据的输出分开
+	！！！原则：我们没有必要每一个请求就对应一个控制器，可以把同一逻辑的请求（同一张表的操作			）提交给一个控制器即可。
+什么是会话：
+	打开浏览器，访问某个网站的很多页面，当你关闭浏览器后，一个会话结束
+cookie的初步介绍
+	1.cookie是保持在客户端
+	2.cookie的基本使用
+		cookie会以字符串的形式来保存
+		如何创建一个cookie，代码cookie1.php
+		①当浏览器访问cookie1.php页面时候我们服务器回会送http响应，当浏览器获取到该信息后，就会保存该cookie到本机的C:\Users\Administrator\AppData\Roaming\Microsoft\Windows\Cookies目录下
+		②如果我们没有该时间，cookie不会保存到客户端，当浏览器的会话结束，cookie失效
+		③cookie能保存什么样的信息，就是字符串
+		④cookie可以保存多个键值对
+		⑤cookie也可以保存中，默认将会对中文进行urencode进行编码
+		⑥cookie可以有多个键值对，他们的保存之间可以不一致
+		如何从客户端获取保存的cookie信息，代码cookie2.php
+		①如果cookie有效时间到，则不能取出
+		②客户端的cookie信息通过http协议Cookie:name=shunping这个机制是http协议规定的
+		更新某个cookie key<==>val实际上就是重新设置
+		setCookie();
+		删除cookie信息
+		指定删除某以一个键值对
+			setCookie("key","",time()-200);
+		删除所有键值对
+			用foreach循环，遍历删除。
+			删除后文件就没了
+使用时间！！！有可能，你在使用上次登录时间的方法的时候，会提示一个时区错误，需要我们设置时区 ，可以再php文件中设置(使用date_default_timezone_set("Asia/Chongqing")），或者在php.ini中设置;date.timezone=Asia/Chongqing
+!!!如果保存时间不设置，则该信息不保存到文件中，但是浏览器不关闭仍然可以访问
+Session初步介绍
+	①Session是一种服务器端技术
+	②Session的基本用法（crud）增删改查
+		2.1如何保存Session文件
+			保存的数据格式：name|s:8:"shun";
+			name就是key
+			s:表示数据类型
+			8:数据大小
+		!!!session可以保存的类型：string,double,bool,array,object
+		2.2获取Session数据
+		2.3更新Session数据
+		2.4删除Session数据
+			
+
+小结：①要使用session，都需要初始化session_start()
+	注意：一个会话对应一个session文件
+      ②session文件中可以放入多个key<==>zhival对，注意key不能重复，val可以是如上类型
+	session默认存在时间为24分钟(1440s)，可以再php.ini修改session.gc_maxlifetime=1440
+	session存放路径可以再php.ini中修改session.save_path="c:/mysession"
+	修改后需要重新启用Apache
+      ③Cookie和Session的主要区别
+		Cookie是吧用户的数据写在用户的浏览器
+		Session技术吧用户的数据写到用户独占的$_SESSION中，存在服务器的某个路径的文件中
+      ④在使用$_SESSION前要保证session被初始化，具体方法有
+		先调用session_start()
+		或者在php.ini文件中配置session.auto_start=1   //不推荐使用
+！！！如果用户禁用cookie后，服务器每次session_start()都会创建一个新的session文件，后果就是无法让多个页面去共享一份session文件
+	解决：
+	方案一：在每个超链接上添加一个PHPSESSID=sessionId;同时子啊每个页面加入:
+			if(isset($_GET['PHPSESID'])){
+				//设置session_id
+				session_id($_GET['PHPSESID']);
+			}
+			session_start();...
+	方案二：使用常量SID
+		使用方法如下
+		在超链接action header("Loacation:xx")可以直接拼接SID常量即可
+		echo"<a href='ShopProcess.php?bookid=sn003&bookname=西游记&".SID."'>西游记</a><br/>";
+	方案三：可以启用session.use_trans_sid指定是否启用透明SID支持 即可以这样设置
+		session.use_trans_sid=1,这样重启Apache后生效
+启用php绘图库  extension=php_gd2.dll
+php.ini文件中关于cookie和session的设置
+	①session.name
+		该配置用于设置session的名字，这个值可以通过session_name()来获取
+	②session.use_trans_sid
+		默认是0，如果启用给每个url启用session名=sessionId，对安全有影响，不推荐开启
+ 	③session.save_path="c:/mysession"
+		设置session的保存路径
+	④session.gc_maxlifetim=1440  设置session最大生命周期
+	  session.gc_probability=1	
+	  session.gc_divisor=1000	//当某个用户操作session的时候，会使用到session_start()，该函数会调用gc,其概率是session.gc_probability/session.gc_divisor
+		原因是，对于一个网站来说，很多用户访问，因此当大量的用还有访问的时候，概率很多，如果网站规模越大，我们建议，把这个概率设置越小。
+		上面三个配置，共同来决定，session的垃圾回收机制
+	⑤session.cookie_lifetime=0
+	该设置可以指定cookie默认生命周期，默认是0，表示当浏览器关闭后，该cookie失效，你可以这样
+		setcookie("名字","val",time()+3600);
+		setcookie("名字","val");
+*自定义会话处理器
+	session的各种操作，都可以通过自定义会话处理器来自己决定怎么处理，通过		session_set_save_handler
+		如果你要自定义处理session，需要在php.ini文件中做一个设置
+		session.save_handler=[files\user]
+	session可以存放的位置：
+		①文件
+		②数据库
+		③内存（memacache）
+		④网络文件nfs
+session和cookie对的对比
+	①存在位置
+		Cookie是吧用户的数据写在用户的浏览器
+		Session技术吧用户的数据写到用户独占的$_SESSION中，存在服务器的某个路径的文件中
+	②安全性
+		session安全性较高
+	③网络传输量
+		cookie通过网络子啊客户端与服务器端传输。而session保存在服务器端，不需要传输
+	④生命周期
+		cookie的生命周期是累积的，从创建时候开始，一段时间后无效
+		session的生命周期是间隔的，没有访问过一段时间后，信息无效
+php文件编程：
+	必要性：
+		在网站开发中，我们经常使用到文件的上传和下载，就是经典的文件编程使用
+		文件的基本概念：
+		文件就是保持数据（文本数据，二进制的数据），在程序猿的角度看文件就是数据源
+		文件流
+		在对文件的操作过程中，我们是以流的形式来操作的
+		如果数据是从程序(内存)向文件(磁盘)流动，则我们称为输出流，反之，称为输入流
+php文件操作的基本方法
+①获取文件的信息
+	1.1 fopen打开文件
+		基本用法fopen（文件路径【相对路径/绝对路径】，打开模式）；
+			(查文档)
+		fstat该函数返回几个信息
+			[atime] => 1432456106 //该文件上一次被访问的时间
+    			[mtime] => 1432456106 //该文件上一次内容被修改的时间
+    			[ctime] => 1432456106 //该文件上一次文件所有者/文件所在组修改时间
+②如何读文件
+	三种方法：file2.php
+	parse_ini_file("dob.in");//读取配置文件，返回一个数组
+③如何写文件
+	
+④如何拷贝文件
+⑤文件下载任务
+⑥文件创建，删除  文件夹的创建和删除
+
+php.ini中upload_max_filesize=可以设置上传文件的大小
+php文件编程实际运用-文件上传
+	如果要上传文件，我们需要把<form enctype="multipart/form-data" method="post"></form>
+细节：
+	如何控制用户上传的文件大小<2M
+	如何控制用户上传的文件类型
+	如何防止用户的图片覆盖问题
+	如何防止同一个用户上传用户文件名相同问题
+	详见upload.php
+php绘图技术
+	1.php绘图技术的基本原理和步骤
+	 创建画布
+	 绘制需要的各种图形(圆，直线，矩形，弧形，扇形)
+	 输出到网页，也可以另存
+	 销毁图片（释放内存）
+
+目前网站开发常见图片格式：gif jpg/jpeg png bmp...
+总结：
+	gif图片压缩率高，但是只能显示256色，可能造成颜色的丢失，可以显示动画
+	jpg/jpeg压缩率高，可以用较小的文件来显示，网页上用的比较多
+	png，综合了gif和jpg的优势，缺点是不能显示动画
+php绘图技术快速入门
+	首先请大家确认你的gd库启用php.ini
+	启用图像库
+	extension=php_gd2.dll
+	然后重启Apache
+JpGraph介绍
+	jpgrapf安装和配置
+	1.下载安装
+	2.解压，拷贝到htdoces目录
+	3.配置完毕后使用,就是把example目录下的其他文件剪切到example文件夹内,注意要新建一个	jpgraph文件夹	
+！！！如果要把jpgrapf报表嵌入到其他php文件中，可以使用image标签
+
+php网上支付技术讲座:
+	目前两种支付方式
+		1.直接与银行对接
+			优点是安全
+			缺点是工作量大，而且需要资格审核
+		2.和中间公司对接
+			缺点是安全隐患
+			优点就是开发维护方便

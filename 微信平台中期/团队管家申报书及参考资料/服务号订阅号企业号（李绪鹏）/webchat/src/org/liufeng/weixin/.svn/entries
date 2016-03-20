@@ -1,0 +1,45 @@
+10
+
+dir
+12
+https://pc201409030650/svn/webchat/trunk/webchat/src/org/liufeng/weixin
+https://pc201409030650/svn/webchat
+
+
+
+2014-10-27T06:53:07.090190Z
+12
+user2
+
+
+svn:special svn:externals svn:needs-lock
+
+
+
+
+
+
+
+
+
+
+
+25c1c7e0-2af8-1648-a8e7-d4cba69b60f4
+
+
+
+
+
+
+0
+empty
+
+main
+dir
+
+pojo
+dir
+
+util
+dir
+
