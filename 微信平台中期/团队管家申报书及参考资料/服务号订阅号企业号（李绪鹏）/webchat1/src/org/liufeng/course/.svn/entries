@@ -1,48 +1,0 @@
-10
-
-dir
-5
-https://pc201409030650/svn/webchat/trunk/webchat1/src/org/liufeng/course
-https://pc201409030650/svn/webchat
-
-
-
-2014-10-25T09:45:29.464736Z
-5
-user1
-
-
-svn:special svn:externals svn:needs-lock
-
-
-
-
-
-
-
-
-
-
-
-25c1c7e0-2af8-1648-a8e7-d4cba69b60f4
-
-
-
-
-
-
-0
-empty
-
-message
-dir
-
-service
-dir
-
-servlet
-dir
-
-util
-dir
-
