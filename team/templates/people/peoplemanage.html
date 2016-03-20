@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>cs</title>
+</head>
+<body>
+{% for member in members %}
+    <div class="demand_list">
+        {{member.name}}{{member.department}}
+    </div>
+    {% empty %}暂无
+    {% endfor %}</body>
+</html>

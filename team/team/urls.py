@@ -16,6 +16,9 @@ urlpatterns = [
       url(r'^menu/$',menu),
         #平台管理
       url(r'^people/$',people),
+      url(r'^peopleDepartment/$',peopleDepartment),
+      url(r'^peoplemanage/$',peoplemanage),
+      url(r'^addmessage/$',addmessage),
         #项目管理
       url(r'^project/$',project),
       url(r'^projectindex/$',projectindex),
@@ -44,9 +47,15 @@ urlpatterns = [
       url(r'^deleteassign/$',deleteassign),
       url(r'^addassign/$',addassign),
       url(r'^assigndetail/$',assigndetail),
-        #畅言论坛
+      url(r'^report/$',report),
         #畅言论坛
       url(r'^bbs/$',bbs),
+      url(r'^bbslist/$',bbslist),
+      url(r'^addbbs/$',addbbs),
+      url(r'^bbsdetail/$',bbsdetail),
+      url(r'^votelist/$',votelist),
+      url(r'^addvote/$',addvote),
+      url(r'^votedetail/$',votedetail),
         #备忘录
       url(r'^memo/$',MemoTemplateView.as_view(), name='memoindex'),
       url(r'^addmemo/$',addmemo),

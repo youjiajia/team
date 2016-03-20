@@ -229,3 +229,55 @@ POST方式：
 21：loglist.html 接口/loglist/
 方式:GET
 返回:logs:日志类需要显示log.name,log.LogContent,log.CreateTime
+22：reportlist.html 接口/report/
+方式：GET
+返回：projects  是project类列表
+	每个project以表格形式展现：表格第一行： 项目名称：project.ProjectName   所在部门：project.Departmentname  
+				表格第二行：创建人：project.adminname 开始时间：project.ProjectStartTime
+				表格第三行：项目状态：project.ProjectStatus 项目结束时间：project.endtime
+23：peopleindex.html 接口/people/
+方式:GET
+页面需要显示三个链接：部门管理，人员管理，消息推送
+24：peopleDepartment.html 接口/peopleDepartment/
+方式：GET
+返回：jsonlist 是一个部门列表类显示json.id json.name，右上角有添加
+25：peoplemanage.html 接口/peoplemanage/
+方式：GET
+返回：members：member类list 显示member.name，member.department
+右上角能添加
+26：addmessage.html 接口/addmessage/
+方式GET
+返回：jsonlist 是一个部门列表类显示json.id json.name
+需要选择部门，然后下面输入推送消息内容和发送
+27：bbsindex.html 接口/bbs/
+页面显示两个链接，一个是论坛一个是投票
+28：bbslist.html 接口/bbslist/
+方式：GET
+返回：topics话题类list显示topic.touxiang头像,topic.name发起人姓名topic.TopicContent话题内容topic.CreateTime创建时间
+29、bbsadd.html  接口/addbbs/
+方式:GET
+直接到页面
+方式post
+需要TopicContent 话题内容
+30、bbsdetail.html 接口/bbsdetail/
+方式：GET
+需要：titleid：话题id
+返回：topic话题类 显示topic.touxiang头像,topic.name发起人姓名topic.TopicContent话题内容topic.CreateTime创建时间
+replys回复类list  显示reply.touxiang头像,reply.name回复者姓名reply.ReplyContent话题内容reply.CreateTime创建时间
+方式：POST
+需要：titleid：话题id
+	ReplyContent：回复内容
+返回：直接跳转
+31、votelist.html  接口/votelist/
+方式：GET
+返回：votes 投票类list 需要显示vote.touxiang,vote.name,vote.TopicContent.vote.CreateTime
+32、voteadd.html  接口/addvote/
+方式：GET 直接到页面
+POST：
+需要：没写
+33、votedetail.html 接口/votedetail/
+方式：GET   需要voteid投票id
+返回:vote投票类显示vote.touxiang,vote.name,vote.TopicContent.vote.CreateTime
+options:选项列表显示每一项内容option.OptionContent
+POST 需要optionid选项id
+返回直接跳转

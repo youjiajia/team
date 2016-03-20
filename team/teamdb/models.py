@@ -45,7 +45,7 @@ class T_Topic(models.Model):
     MemberId=models.ForeignKey(T_Member, verbose_name='创建人id')
     TopicContent=models.TextField(verbose_name='话题内容')
     CreateTime=models.DateTimeField(auto_now=True, verbose_name='创建时间')
-    Department_ID=models.CharField(max_length=50, verbose_name='部门id')
+    # Department_ID=models.CharField(max_length=50, verbose_name='部门id')
 
     def __str__(self):
         return self.TopicContent
@@ -53,8 +53,9 @@ class T_Topic(models.Model):
 #话题回复表
 class T_TopicReply(models.Model):
     MemberId=models.ForeignKey(T_Member, verbose_name='成员id')
+    TopicId=models.ForeignKey(T_Topic, blank=True,null=True)
     ReplyContent=models.TextField(verbose_name='回复内容')
-    Level=models.IntegerField(verbose_name='回复楼层')
+    # Level=models.IntegerField(verbose_name='回复楼层')
     CreateTime=models.DateTimeField(auto_now=True, verbose_name='回复时间')
 
     def __str__(self):
@@ -73,7 +74,7 @@ class T_Vote(models.Model):
     MemberId=models.ForeignKey(T_Member, verbose_name='创建人id')
     VoteContent=models.TextField(verbose_name='话题内容')
     CreateTime=models.DateTimeField(auto_now=True, verbose_name='创建时间')
-    Department_ID=models.CharField(max_length=50, verbose_name='部门id')
+    # Department_ID=models.CharField(max_length=50, verbose_name='部门id')
 
     def __str__(self):
         return self.VoteContent

@@ -35,12 +35,7 @@ sCorpSecret = tree.find("sCorpSecret").text
 
 def people(req):
     # 平台管理
-    return render_to_response('index.html')
-
-
-def bbs(req):
-    # 畅言论坛
-    response = render_to_response('index.html')
+    response=render_to_response('people/peopleindex.html')
     if req.COOKIES.get('userid', '') == '':
         access_token = getToken(sCorpSecret)
         code = req.GET.get('code')
@@ -53,6 +48,115 @@ def bbs(req):
             response.set_cookie('userid', jsonreturn['UserId'])
     return response
 
+def peopleDepartment(req):
+    #部门管理
+    jsonlist=getDepartmentList()
+    class department:
+        pass
+    list=[]
+    for dep in jsonlist:
+        newdepartment=department()
+        setattr(newdepartment,'id',dep['id'])
+        setattr(newdepartment,'name',dep['name'])
+        list.append(newdepartment)
+    return render_to_response('people/peopleDepartment.html',{'jsonlist':list})
+def peoplemanage(req):
+    #人员管理
+    members=T_Member.objects.all()
+    jsonlist=getDepartmentList()
+    for member in members:
+        setattr(member,'name',member.memberinfo['name'])
+        str=''
+        for deid in member.memberinfo['department']:
+            if deid !='':
+                for dejson in jsonlist:
+                    if deid == int(dejson['id']):
+                        str += dejson['name']
+                        str +=','
+        setattr(member,'department',str)
+    return render_to_response('people/peoplemanage.html',{'members':members})
+def addmessage(req):
+    jsonlist=getDepartmentList()
+    class department:
+        pass
+    list=[]
+    for dep in jsonlist:
+        newdepartment=department()
+        setattr(newdepartment,'id',dep['id'])
+        setattr(newdepartment,'name',dep['name'])
+        list.append(newdepartment)
+    return render_to_response('people/addmessage.html',{'jsonlist':list})
+def bbs(req):
+    # 畅言论坛
+    response = render_to_response('bbs/bbsindex.html')
+    if req.COOKIES.get('userid', '') == '':
+        access_token = getToken(sCorpSecret)
+        code = req.GET.get('code')
+        urlreq = urllib2.Request(
+            'https://qyapi.weixin.qq.com/cgi-bin/user/getuserinfo?access_token=' + access_token + '&code=' + code)
+        urlresponse = urllib2.urlopen(urlreq)
+        the_page = urlresponse.read()
+        jsonreturn = json.loads(the_page)
+        if jsonreturn.has_key('UserId'):
+            response.set_cookie('userid', jsonreturn['UserId'])
+    return response
+def bbslist(req):
+    #论坛列表页面
+    topics=T_Topic.objects.order_by('-CreateTime')
+    for topic in topics:
+        setattr(topic,'touxiang',topic.MemberId.jsonreturn['avatar'])
+        setattr(topic,'name',topic.MemberId.jsonreturn['name'])
+    return render_to_response('bbs/bbslist.html',{'topics':topics})
+def addbbs(req):
+    #添加话题
+    if req.method=='GET':
+        return render_to_response('bbs/bbsadd.html')
+    else:
+        member = T_Member.objects.get(UserID=req.COOKIES.get('userid'))
+        T_Topic.objects.create(MemberId=member,TopicContent=req.POST.get('TopicContent'))
+        return HttpResponseRedirect('/bbslist/')
+def bbsdetail(req):
+    if req.method=='GET':
+        topic=T_Topic.objects.get(id=req.GET.get('titleid'))
+        setattr(topic,'touxiang',topic.MemberId.jsonreturn['avatar'])
+        setattr(topic,'name',topic.MemberId.jsonreturn['name'])
+        replys=T_TopicReply.objects.filter(TopicId=topic).order_by('-CreateTime')
+        for reply in replys:
+            setattr(reply,'touxiang',reply.MemberId.jsonreturn['avatar'])
+            setattr(reply,'name',reply.MemberId.jsonreturn['name'])
+        return render_to_response('bbs/bbsdetail.html',{'topic':topic,'replys':replys})
+    else:
+        member = T_Member.objects.get(UserID=req.COOKIES.get('userid'))
+        topic=T_Topic.objects.get(id=req.POST.get('titleid'))
+        T_TopicReply.objects.cretae(MemberId=member,TopicId=topic,ReplyContent=req.POST.get('ReplyContent'))
+        return HttpResponseRedirect('/bbsdetail/?titleid='+req.POST.get('titleid'))
+def votelist(req):
+    #投票列表页面
+    votes=T_Vote.objects.order_by('-CreateTime')
+    for vote in votes:
+        setattr(vote,'touxiang',vote.MemberId.jsonreturn['avatar'])
+        setattr(vote,'name',vote.MemberId.jsonreturn['name'])
+    return render_to_response('bbs/votelist.html',{'votes':votes})
+def addvote(req):
+    #添加投票
+    if req.method=='GET':
+        return render_to_response('bbs/voteadd.html')
+    else:
+        member = T_Member.objects.get(UserID=req.COOKIES.get('userid'))
+        T_Vote.objects.create(MemberId=member,VoteContent=req.POST.get('VoteContent'))
+        return HttpResponseRedirect('/votelist/')
+def votedetail(req):
+    if req.method=='GET':
+        vote=T_Vote.objects.get(id=req.GET.get('voteid'))
+        setattr(vote,'touxiang',vote.MemberId.jsonreturn['avatar'])
+        setattr(vote,'name',vote.MemberId.jsonreturn['name'])
+        options=T_VoteOptions.objects.filter(VoteId=vote)
+        return render_to_response('bbs/votedetail.html',{'vote':vote,'options':options})
+    else:
+        option=T_VoteOptions.objects.get(id=req.POST.get('optionid'))
+        option.OptionNum+=1
+        option.save()
+        return HttpResponseRedirect('/votelist/')
 
 # 备忘录
 class MemoTemplateView(TemplateView):
@@ -586,7 +690,7 @@ def bugdetail(req):
         project = T_Project.objects.get(id=req.POST.get('id'))
         projectmember = T_ProjectMember.objects.get(
             ProjectId=project, MemberId=member)
-        bug = T_Demand.objects.get(id=req.GET.get('bugid'))
+        bug = T_Demand.objects.get(id=req.POST.get('bugid'))
         module = T_Module.objects.get(id=req.POST.get('meduleid'))
         bug.BugStatus = req.POST.get('BugStatus')
         bug.BugTitle = req.POST.get('BugTitle')
@@ -683,3 +787,16 @@ def loglist(req):
         name = log.ProjectMemberId.MemberId.memberinfo['name']
         setattr(log,'name',name)
     return render_to_response('log/loglist.html',{'logs':logs})
+
+def report(req):
+    member = T_Member.objects.get(UserID=req.COOKIES.get('userid'))
+    projects = T_Project.objects.get(Department_ID__in=member.memberinfo['department'])
+    dejsons = getDepartmentList()
+    for project in projects:
+        for dejson in dejsons:
+            if project.Department_ID == dejson['id']:
+                setattr(project,'Departmentname',dejson['name'])
+        setattr(project,'adminname',project.AdminId.MemberId.memberinfo['department'])
+        if project.ProjectStatus=='已完成':
+            setattr(project,'endtime',project.ProjectEndTime)
+    return render_to_response('report/reportlist.html',{'projects':projects})
