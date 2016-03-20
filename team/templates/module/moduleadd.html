@@ -98,7 +98,7 @@
 			var modul_name=$("#inp_name").val();
 			var modul_status=$("#sel_status").val();
 			var jsondata={};
-			jsondata['id']='{{id}}';
+			jsondata['id']={{id}};
 			jsondata['ModuleName']=modul_name;
 			jsondata['Level']=modul_status;
 			$.ajaxSetup({ 
@@ -109,7 +109,7 @@
     			type:"post",
     			data:jsondata,
     			success:function(data){
-    				location.href="/moduleindex/?id="+data;
+    				location.href="/moduleindex/?id="+{{id}};
     			},
     			error:function(xhr){
     				alert("出错"+xhr.responseText);

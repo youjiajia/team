@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title></title>
+	<meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=0">
+	<link rel="stylesheet" href="/webStatic/css/weui.min.css"/>
+	<style>
+		div,body,img{
+			margin:0;
+			padding: 0;
+		}
+		a{
+			cursor: pointer;
+			text-decoration: none;
+		}
+		.header{
+			width:98%;
+			height:40px;
+			padding-left:10px;
+			line-height: 40px;
+			background-color:#84A35D;
+			color: #ffffff;
+		}
+		.header a{
+			color: #ffffff;
+		}
+		.afloat{
+			float: left;
+		}
+		.form_div{
+			width: 83%;
+			min-height: 400px;
+			height: auto;
+			margin: 10px;
+			padding: 10px 20px 10px 20px;
+			border-radius:5px; 
+			border: 1px dashed #aaa;
+		}
+		.form_div > form > div{
+			min-height: 40px;
+			height: auto;
+			line-height: 40px;
+			width: 100%;
+			border: 1px solid #fff;
+		}
+		.form_div > form > div > span{
+			color: #555;
+		}
+		.form_div > form > div > select{
+			width: 150px;
+			height: 25px;
+			border: 1px solid #eee;
+			border-radius: 5px;
+		}
+		.form_div > form > div > input{
+			width: 145px;
+			height: 20px;
+			border: 1px solid #eee;
+			border-radius: 5px;
+		}
+	</style>
+</head>
+<body>
+	<div class="header">
+		<a class="afloat" href="/assignlist/?id={{id}}"><i class="weui_icon_cancel"></i> 返回</a>
+		<p style="display: inline-block;width: 2px;height: 20px;background-color: #fff;margin: 10px;float: left;"></p>
+		<a href="" id="submosule"><i class="weui_icon_success_circle"></i> 添加</a>
+	</div>
+	<div class="form_div">
+		<form  method = 'post'  action = 'user_login_submit.action'>
+			<input type="hidden" id="hidden_proid" value="{{id}}">
+			<p>请选择任意一种任务</p>
+			<div>
+				<span>需求任务：</span>
+				<select name="need_name" id="need_name">
+				<option value="">请选择需求</option>
+				{% for demand in demands %}
+					<option value="{{demand.id}}">{{demand.DemandName}}</option>
+					
+				{% empty %}暂无BUG
+				{% endfor %}
+				</select>
+			</div>
+			<div>
+				<span>BUG任务：</span>
+				<select name="bug_name" id="bug_name">
+				<option value="">请选择BUG</option>
+				{% for bug in bugs %}
+					<option value="{{bug.id}}">{{bug.BugTitle}}</option>
+				{% empty %}暂无BUG
+				{% endfor %}
+				</select>
+			</div>
+			<div>
+				<span style="float: left;">指定成员：</span>
+				{% for member in members %}
+				<div style="margin-left: 85px;">
+					<input type="checkbox" name="checkbox_member" value="{{member.id}}">  
+					<label style="color: #555;margin-left: 20px;">{{member.name}}</label>
+				</div>
+				{% empty %}暂无成员
+				{% endfor %}
+			</div>
+		</form>
+	</div>
+	<script src="/webStatic/js/jquery.min.js"></script>
+	<!-- <script src="../jquery.min.js"></script> -->
+	<script>
+		$(function(){
+			$("#submosule").off("click").click(function(){
+				postform();
+			})
+		})
+		function postform(){
+			var strmember="";
+			$("input[name='checkbox_member']").each(function(){
+				if($(this).is(":checked")){
+					strmember+=$(this).val()+",";
+				}
+			});
+			// alert(strmember);
+			var need_name=$("#need_name").val();
+			var bug_name=$("#bug_name").val();
+			var jsondata={};
+			if(need_name!=""&&bug_name!=""){
+				alert("需求任务与BUG任务只能选一种");
+			}else{
+				if(need_name!=""&&bug_name==""){
+					jsondata['demandid']=need_name;
+				}
+				if(need_name==""&&bug_name!=""){
+					jsondata['bugid']=bug_name;
+				}
+				if(need_name==""&&bug_name==""){
+					alert("请选择任意一种任务");
+				}
+			}
+			jsondata['id']='{{id}}';
+			jsondata['members']=strmember;
+			$.ajaxSetup({ 
+				async : false 
+			}); 
+    		$.ajax({
+    			url:"/addassign/",
+    			type:"post",
+    			data:jsondata,
+    			success:function(data){
+    				location.href="/assignlist/?id={{id}}";
+    			},
+    			error:function(xhr){
+    				alert("出错"+xhr.responseText);
+    			}
+    		});
+    	}
+	</script>
+</body>
+</html>

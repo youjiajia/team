@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 # coding=utf-8
+from __future__ import with_statement
 from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseRedirect
 import json
@@ -381,11 +382,10 @@ def moduleindex(req):
     modulelist = T_Module.objects.filter(ProjectId=project)
     projectmember = T_ProjectMember.objects.get(
         ProjectId=project, MemberId=member)
-    if ((T_Admin.objects.filter(MemberId=member, Department_ID=T_Project.objects.get(
-            id=req.GET.get('id')).Department_ID).count() != 0) | projectmember.isHead) & (T_Demand.objects.filter(ModuleId__in=modulelist).count() == 0):
+    if ((T_Admin.objects.filter(MemberId=member, Department_ID=T_Project.objects.get(id=req.GET.get('id')).Department_ID).count() != 0) | projectmember.isHead) & (T_Demand.objects.filter(ModuleId__in=modulelist).count() == 0):
         return render_to_response('module/modulelist.html', {"level": "admin", "id": req.GET.get('id'), "modulelist": modulelist})
     else:
-        return render_to_response('module/modulelist.html', {"level": "member", "id": req.GET.get('id'), "modulelist": modulelist})
+        return render_to_response('module/modulelist.html', {"level": "admin", "id": req.GET.get('id'), "modulelist": modulelist})
 
 
 def addmodule(req):
@@ -397,43 +397,37 @@ def addmodule(req):
             ProjectId=project, MemberId=member)
         T_Module.objects.create(ProjectMemberId=projectmember, ProjectId=project, ModuleName=req.POST.get(
             'ModuleName'), Level=int(req.POST.get('Level')))
-        return HttpResponse('success')
+        return HttpResponseRedirect('/moduleindex/?id='+req.POST.get('id')) 
     elif req.method == 'GET':
         return render_to_response('module/moduleadd.html', {'id': req.GET.get('id')})
 
 
 def deletemodule(req):
     # 删除模块
-    module = T_Module.objects.get(id=req.GET.get('id'))
-    if T_Demand.objects.filter(ModuleId=module).count() == 0:
-        module.delete()
-        return HttpResponse('success')
-    else:
-        return HttpResponse('failure')
-
+    module = T_Module.objects.get(id=req.GET.get('moduleid'))
+    module.delete()
+    return HttpResponseRedirect('/moduleindex/?id='+req.GET.get('id'))
 
 def moduledetail(req):
     # 模块详情页
     if req.method == 'GET':
+        print req.GET.get('id')
         member = T_Member.objects.get(UserID=req.COOKIES.get('userid'))
         project = T_Project.objects.get(id=req.GET.get('id'))
-        module = T_Module.objects.get(id=req.GET.get('id'))
+        module = T_Module.objects.get(id=req.GET.get('moduleid'))
         projectmember = T_ProjectMember.objects.get(
             ProjectId=project, MemberId=member)
         if ((T_Admin.objects.filter(MemberId=member, Department_ID=T_Project.objects.get(id=req.GET.get('id')).Department_ID).count() != 0) | projectmember.isHead) & (T_Demand.objects.filter(ModuleId=module).count() == 0):
-            return render_to_response('module/moduledetail.html', {'module': module, 'isheader': '1'})
+            return render_to_response('module/moduledetail.html', {'module': module, 'isheader': '1','id':req.GET.get('id')})
         else:
             return render_to_response('module/moduledetail.html', {'module': module, 'isheader': '0'})
     else:
-        module = T_Module.objects.get(id=req.GET.get('id'))
+        module = T_Module.objects.get(id=req.POST.get('moduleid'))
         if T_Demand.objects.filter(ModuleId=module).count() == 0:
             module.ModuleName = req.POST.get('ModuleName')
             module.Level = int(req.POST.get('Level'))
             module.save()
-            return HttpResponse('success')
-        else:
-            return HttpResponse('failure')
-
+            return HttpResponseRedirect('/moduleindex/?id='+req.POST.get('id'))
 
 def demandlist(req):
     # 需求列表页
@@ -491,7 +485,7 @@ def demanddetail(req):
         project = T_Project.objects.get(id=req.POST.get('id'))
         projectmember = T_ProjectMember.objects.get(
             ProjectId=project, MemberId=member)
-        demand = T_Demand.objects.get(id=req.GET.get('demandid'))
+        demand = T_Demand.objects.get(id=req.POST.get('demandid'))
         module = T_Module.objects.get(id=req.POST.get('meduleid'))
         demand = T_Demand.objects.get(id=req.POST.get('demandid'))
         demand.ModuleId = module
@@ -573,8 +567,10 @@ def testlist(req):
         ModuleId__in=modules).order_by('-TestStartTime')
     promember = T_ProjectMember.objects.get(ProjectId=project, MemberId=member)
     if promember.isHead:
+        print 1
         return render_to_response('test/testlist.html', {'isheader': '1', 'tests': tests, "id": req.GET.get('id')})
     else:
+        print 0
         return render_to_response('test/testlist.html', {'isheader': '0', 'tests': tests, "id": req.GET.get('id')})
 
 
@@ -587,7 +583,7 @@ def testdetail(req):
         modules = T_Module.objects.filter(ProjectId=project)
         promember = T_ProjectMember.objects.get(
             ProjectId=project, MemberId=member)
-        if promember.isHead & test.TestStatus != '已完成':
+        if (promember.isHead) & (test.TestStatus != '已完成'):
             return render_to_response('test/testdetail.html', {'modules': modules, 'test': test, 'isheader': '1', "id": req.GET.get('id')})
         else:
             return render_to_response('test/testdetail.html', {'modules': modules, 'test': test, 'isheader': '0', "id": req.GET.get('id')})
@@ -616,7 +612,8 @@ def addtest(req):
     if req.method == 'GET':
         project = T_Project.objects.get(id=req.GET.get('id'))
         modules = T_Module.objects.filter(ProjectId=project)
-        return render_to_response('/test/testadd.html', {'id': req.GET.get('id'), 'modules': modules})
+        print req.GET.get('id')
+        return render_to_response('test/testadd.html', {'id': req.GET.get('id'), 'modules': modules})
     else:
         member = T_Member.objects.get(UserID=req.COOKIES.get('userid'))
         project = T_Project.objects.get(id=req.POST.get('id'))
@@ -661,15 +658,15 @@ def bugadd(req):
     elif req.method == 'GET':
         project = T_Project.objects.get(id=req.GET.get('id'))
         modules = T_Module.objects.filter(ProjectId=project)
-        tests = T_Test.objects.filter(ProjectId=project)
-        return render_to_response('bug/bugadd.html', {'id': req.GET.get('id'), 'modules': modules, 'tests': test})
+        tests = T_Test.objects.filter(ModuleId__in=modules)
+        return render_to_response('bug/bugadd.html', {'id': req.GET.get('id'), 'modules': modules, 'tests': tests})
 
 
 def bugdelete(req):
     # 删除bug
     print req.GET.get('bugid')
     T_Bug.objects.get(id=req.GET.get('bugid')).delete()
-    return HttpResponseRedirect('/demandlist/?id=' + req.GET.get('id'))
+    return HttpResponseRedirect('/buglist/?id=' + req.GET.get('id'))
 
 
 def bugdetail(req):
@@ -690,7 +687,7 @@ def bugdetail(req):
         project = T_Project.objects.get(id=req.POST.get('id'))
         projectmember = T_ProjectMember.objects.get(
             ProjectId=project, MemberId=member)
-        bug = T_Demand.objects.get(id=req.POST.get('bugid'))
+        bug = T_Bug.objects.get(id=req.POST.get('bugid'))
         module = T_Module.objects.get(id=req.POST.get('meduleid'))
         bug.BugStatus = req.POST.get('BugStatus')
         bug.BugTitle = req.POST.get('BugTitle')
@@ -727,10 +724,12 @@ def addassign(req):
         bugs=T_Bug.objects.filter(ModuleId__in=modules).filter(BugStatus='未分配').order_by('Level')
         members=T_ProjectMember.objects.filter(ProjectId=project)
         for member in members:
-            name = members.MemberId.memberinfo['name']
+            name = member.MemberId.memberinfo['name']
             setattr(member,'name',name)
         return render_to_response('assign/assignadd.html',{'members':members,'demands':demands,'bugs':bugs,'id': req.GET.get('id')})
     else:
+        print req.POST.get('members')
+        print type(req.POST.get('members'))
         members=req.POST.get('members').split(',')
         demand=None
         bug=None
@@ -738,9 +737,13 @@ def addassign(req):
             demand=T_Demand.objects.get(id=req.POST.get('demandid'))
         if req.POST.get('bugid','')!='':
             bug=T_Bug.objects.get(id=req.POST.get('bugid'))
-        with transaction.commit_on_success():
+       # with transaction.commit_on_success():
+        if True:
             for member in members:
-                if member !='' & member !=None:
+                print member
+                print type(member)
+                print len(member)
+                if member !=u'' & member !=None:
                     T_DemandAssigned.objects.create(DemandId=demand,BugId=bug,ProjectMemberId=T_ProjectMember.objects.get(id=member))
         return HttpResponseRedirect('/assignlist/?id=' + req.POST.get('id'))
 
@@ -761,7 +764,8 @@ def assigndetail(req):
             return render_to_response('assign/assigndetail.html',{'type':'demand','assign':assign,'logs':logs,'id': req.GET.get('id')})
     else:
         if req.POST.get('type')=='bug':
-            with transaction.commit_on_success():
+           # with transaction.commit_on_success():
+            if True:
                 member = T_Member.objects.get(UserID=req.COOKIES.get('userid'))
                 project = T_Project.objects.get(id=req.POST.get('id'))
                 promember = T_ProjectMember.objects.get(ProjectId=project, MemberId=member)
@@ -789,6 +793,7 @@ def loglist(req):
     return render_to_response('log/loglist.html',{'logs':logs})
 
 def report(req):
+    return render_to_response('report/reportlist.html')
     member = T_Member.objects.get(UserID=req.COOKIES.get('userid'))
     projects = T_Project.objects.get(Department_ID__in=member.memberinfo['department'])
     dejsons = getDepartmentList()

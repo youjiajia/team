@@ -35,6 +35,8 @@ urlpatterns = [
       url(r'^demanddetail/$',demanddetail),
       url(r'^documentlist/$',documentlist),
       url(r'^adddocument/$',adddocument),
+      url(r'^deletedocument/$',deletedocument),
+      url(r'^documentdetail/$',documentdetail),
       url(r'^testlist/$',testlist),
       url(r'^testdetail/$',testdetail),
       url(r'^deletetest/$',deletetest),
@@ -47,6 +49,7 @@ urlpatterns = [
       url(r'^deleteassign/$',deleteassign),
       url(r'^addassign/$',addassign),
       url(r'^assigndetail/$',assigndetail),
+      url(r'^loglist/$',loglist),
       url(r'^report/$',report),
         #畅言论坛
       url(r'^bbs/$',bbs),

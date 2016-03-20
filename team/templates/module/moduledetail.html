@@ -63,10 +63,11 @@
 </head>
 <body>
 	<div class="header">
-		<a class="afloat" href="/project/"><i class="weui_icon_cancel"></i> 返回</a>
+		<a class="afloat" href="/moduleindex/?id={{id}}"><i class="weui_icon_cancel"></i> 返回</a>
 		<p style="display: inline-block;width: 2px;height: 20px;background-color: #fff;margin: 10px;float: left;"></p>
-		<a href="" id="module_next" onclick="postform();"><i class="weui_icon_success_circle"></i> 修改</a>
-		<a href="#" id="delete_module" style="color: #DD574B;float: right;margin-right: 10px;">删除</a>
+		<a href="#" id="module_next" onclick="postform();"><i class="weui_icon_success_circle"></i> 修改</a>
+		<a href="/deletemodule/?id={{id}}&moduleid={{module.id}}" id="delete_module" style="color: #DD574B;float: right;margin-right: 10px;">删除</a>
+		<input type="hidden" id="hidden_change" value="{{isheader}}">
 	</div>
 	<div class="form_div">
 		<form  method = 'post'  action = 'user_login_submit.action'>
@@ -119,7 +120,8 @@
 			var jsondata={};
 			jsondata['ModuleName']=module_name;
 			jsondata['Level']=module_status;
-			jsondata['id']=module_id;
+			jsondata['moduleid']=module_id;
+			jsondata['id']={{id}};
 			$.ajaxSetup({ 
 				async : false 
 			}); 
@@ -128,7 +130,7 @@
     			type:"post",
     			data:jsondata,
     			success:function(data){
-    				location.href="/moduleindex/?id="+data;
+    				// location.href="/moduleindex/?id="+data;
     			},
     			error:function(xhr){
     				alert("出错"+xhr.responseText);

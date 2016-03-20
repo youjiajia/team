@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title></title>
+	<meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=0">
+	<link rel="stylesheet" href="/webStatic/css/weui.min.css"/>
+	<style>
+		div,body,img{
+			margin:0;
+			padding: 0;
+		}
+		a{
+			cursor: pointer;
+			text-decoration: none;
+		}
+		.header{
+			width:98%;
+			height:40px;
+			padding-left:10px;
+			line-height: 40px;
+			background-color:#84A35D;
+			color: #ffffff;
+		}
+		.header a{
+			color: #ffffff;
+		}
+		.afloat{
+			float: left;
+		}
+		.form_div{
+			width: 83%;
+			min-height: 400px;
+			height: auto;
+			margin: 10px;
+			padding: 10px 20px 10px 20px;
+			border-radius:5px; 
+			border: 1px dashed #aaa;
+		}
+		.form_div > form > div{
+			min-height: 40px;
+			height: auto;
+			line-height: 40px;
+			width: 100%;
+			border: 1px solid #fff;
+		}
+		.form_div > form > div span{
+			color: #555;
+		}
+		.form_div > form > div select{
+			width: 150px;
+			height: 25px;
+			border: 1px solid #eee;
+			border-radius: 5px;
+		}
+		.form_div > form > div input{
+			width: 145px;
+			height: 20px;
+			border: 1px solid #eee;
+			border-radius: 5px;
+		}
+	</style>
+</head>
+<body>
+	<div class="header">
+		<a class="afloat" href="/documentlist/?id={{id}}"><i class="weui_icon_cancel"></i> 返回</a>
+		<p style="display: inline-block;width: 2px;height: 20px;background-color: #fff;margin: 10px;float: left;"></p>
+		<a href="#" onclick="postform();"><i class="weui_icon_success_circle"></i> 修改</a>
+		<a href="/deletedocument/?id={{id}}&documentid={{document.id}}" id="delete_pro" style="color: #DD574B;float: right;margin-right: 10px;">删除</a>
+	</div>
+	<div class="form_div">
+		<form method="POST" name="Form" action="/adddocument/" enctype="multipart/form-data">
+			<input type="hidden" id="pro_id" value="{{id}}">
+			<input type="hidden" id="doc_id" value="{{document.id}">
+			<div>
+				<a style="display: block;color: #555;" href="{{document.DocumentUrl}}"><i class="weui_icon_download"></i>下载文档</a>
+				<span>文档上传人：{{document.uploader}}</span>
+			</div>
+			<div>
+				<span>重新上传文档</span>
+			</div>
+			<div>
+				<span>文档名称：</span>
+				<input type="text" name="inp_name" id="inp_name">
+			</div>
+			<div>
+				<span>上传文档：</span>
+				<input type="file" name="upload_file" id="upload_file">
+			</div>
+			
+		</form>
+	</div>
+	<script src="/webStatic/js/jquery.min.js"></script>
+	<!-- <script src="../jquery.min.js"></script> -->
+	<script>
+	$(function(){
+		$("#inp_name").val('{{document.DocumentName}}');
+	})
+	function postform(){
+		var form = document.forms["Form"];
+		if(form["upload_file"].files.length > 0) { 
+		 // 寻找表单域中的 <input type="file" ... /> 标签
+		 var file = form["upload_file"].files[0]; 
+		 var pro_id=$("#pro_id").val();
+		 var doc_id=$("#doc_id").val();
+		 var document_name=$("#inp_name").val();
+		 var document_filename=file.name;
+		 var r=new FileReader();
+		 r.readAsBinaryString(file);
+		 r.onload = function(e) { 
+		 // 这个事件在读取成功结束后触发
+		 	var data=e.target.result;
+			 var xmlhttp = new XMLHttpRequest();
+			 xmlhttp.open("POST", "/documentdetail/", false);
+			 xmlhttp.setRequestHeader("id", pro_id);
+	　　	 xmlhttp.setRequestHeader("DocumentName", document_name);
+			 xmlhttp.setRequestHeader("filename", document_filename);
+			 xmlhttp.setRequestHeader("documentid", doc_id);
+			 xmlhttp.send(data);
+			 if(xmlhttp.status!=200){
+				alert("出错")
+			 }
+		 }  
+		 
+		}
+		
+	}
+	</script>
+</body>
+</html>

@@ -63,7 +63,7 @@
 </head>
 <body>
 	<div class="header">
-		<a class="afloat" href="/project/"><i class="weui_icon_cancel"></i> 返回</a>
+		<a class="afloat" href="/demandlist/?id={{id}}"><i class="weui_icon_cancel"></i> 返回</a>
 		<p style="display: inline-block;width: 2px;height: 20px;background-color: #fff;margin: 10px;float: left;"></p>
 		<a href="#" onclick="postform();"><i class="weui_icon_success_circle"></i> 添加</a>
 	</div>
@@ -100,18 +100,12 @@
 					<option value="2">2</option>
 					<option value="3">3</option>
 					<option value="4">4</option>
-					<option value="5">5</option>
-					<option value="6">6</option>
-					<option value="7">7</option>
-					<option value="8">8</option>
-					<option value="9">9</option>
-					<option value="10">10</option>
 				</select>
 			</div>
 			<div>
 				<span>&nbsp;&nbsp;需求状态：</span>
 				<select name="sel_status" id="sel_status">
-					<option value="未开始">未开始</option>
+					<option value="未分配">未分配</option>
 					<option value="进行中">进行中</option>
 					<option value="已完成">已完成</option>
 				</select>
@@ -124,7 +118,7 @@
 		function postform(){
 
 			var pro_id=$("#pro_id").val();
-			alert(pro_id);
+			// alert(pro_id);
 			var demand_name=$("#inp_name").val();
 			var demand_module=$("#sel_module").val();
 			var demand_level=$("#sel_level").val();
@@ -146,7 +140,7 @@
     			data:jsondata,
     			success:function(data){
     				if(data=="success"){
-    					location.href="/demandlist/?id="+pro_id;
+    					location.href="/demandlist/?id="+{{id}};
     				}
     			},
     			error:function(xhr){

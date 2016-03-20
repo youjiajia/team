@@ -23,6 +23,11 @@
 			line-height: 40px;
 			background-color:#84A35D;
 			color: #ffffff;
+			text-align: center;
+		}
+		.afloat{
+			float: left;
+			color: #fff;
 		}
 		.div_add_but{
 			float: right;
@@ -93,6 +98,7 @@
 <body>
 	<input type="hidden" id="level_hidden" value="{{isheader}}">
 	<div class="header">
+		<a class="afloat" href="/projectindex/?id={{id}}"><i class="weui_icon_cancel"></i> 返回</a>
 		需求
 		<div class="div_add_but">
 		      <a href="/demandadd/?id={{id}}" class="input_add_but"></a>

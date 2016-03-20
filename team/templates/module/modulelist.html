@@ -103,12 +103,12 @@
 		<a class="afloat" href="/projectindex/?id={{id}}"><i class="weui_icon_cancel"></i> 返回</a>
 		模块
 		<div class="div_add_but">
-		            <a href="/addmodule/?id={{id}}" class="input_add_but"></a>
+		    <a href="/addmodule/?id={{id}}" class="input_add_but"></a>
 		</div>
 	</div>
 	{% for module in modulelist %}
 	<div class="module_list">
-		<a href="/moduledetail/?id={{module.id}}">
+		<a href="/moduledetail/?id={{id}}&moduleid={{module.id}}">
 			<p>模块名称：{{module.ModuleName}}</p>
 		</a>
 	</div>
