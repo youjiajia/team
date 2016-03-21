@@ -107,9 +107,10 @@
 					<option value="2">2</option>
 					<option value="3">3</option>
 					<option value="4">4</option>
+				</select>
 			</div>
 			<div>
-				<span>BGU状态：</span>
+				<span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;BGU状态：</span>
 				<select name="sel_status" id="sel_status">
 					<option value="未分配">未分配</option>
 					<option value="进行中">进行中</option>
@@ -122,11 +123,11 @@
 	<!-- <script src="../jquery.min.js"></script> -->
 	<script>
 		$(function(){
-			$("#inp_name").val({{bug.BugTitle}});
-			$("#sel_module").val({{bug.ModuleId.id}});
-			$("#area_description").val({{bug.BugContent}});
+			$("#inp_name").val('{{bug.BugTitle}}');
+			$("#sel_module").val('{{bug.ModuleId.id}}');
+			$("#area_description").val('{{bug.BugContent}}');
 			$("#sel_status").val('{{bug.BugStatus}}');
-			$("#sel_level").val({{bug.Level}});
+			$("#sel_level").val('{{bug.Level}}');
 			var str="";
 			if('{{bug.TestId}}'!='None'){
 				str="<option value='{{bug.TestId}}'>{{bug.TestId.TestName}}</option>"	

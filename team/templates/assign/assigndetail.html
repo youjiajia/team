@@ -64,9 +64,9 @@
 <body>
 	<div class="header">
 		<a class="afloat" href="/assignlist/?id={{id}}"><i class="weui_icon_cancel"></i> 返回</a>
-		<p style="display: inline-block;width: 2px;height: 20px;background-color: #fff;margin: 10px;float: left;"></p>
-		<a href="#" id="pro_next"<i class="weui_icon_success_circle"></i> 添加</a>
-		<a href="" id="delete_pro" style="color: #DD574B;float: right;margin-right: 10px;">删除</a>
+		<!-- <p style="display: inline-block;width: 2px;height: 20px;background-color: #fff;margin: 10px;float: left;"></p> -->
+		
+		<!-- <a href="" id="delete_pro" style="color: #DD574B;float: right;margin-right: 10px;">删除</a> -->
 		<input type="hidden" id="hidden_change" value="{{isheader}}">
 	</div>
 	<div class="form_div">
@@ -126,16 +126,15 @@
 				</select>
 			</div>
 		</form>
-		<div>
+		<div style="border-top: 1px solid #aaa;margin-top: 20px;padding-top: 10px;">
 			<span style="color: #555;">日志信息</span>
 			{% for log in logs %}
-			<div style="border-bottom: 1px dashed #aaa;">
-				<p>{{log.LogContent}}</p>
-				<p><span>{{log.name}}</span>&nbsp;&nbsp;<span>{{log.CreateTime}}</span></p>
+			<div style="border-bottom: 1px dashed #aaa;margin:15px 0 10px 0;">
+				<p style="color: #555;font-size: 14px;">{{log.LogContent}}</p>
+				<p style="color: #555;font-size: 14px;"><span>{{log.name}}</span>&nbsp;&nbsp;<span>{{log.CreateTime}}</span></p>
 			</div>
 			{% empty %}暂无日志
     		{% endfor %}
-			<span style="color: #555;">填写日志</span>
 			<div class="weui_cells weui_cells_form">
 			        <div class="weui_cell">
 			            <div class="weui_cell_bd weui_cell_primary">
@@ -144,6 +143,7 @@
 			        </div>
     			</div>
 		</div>
+		<a href="#" id="pro_next" style="color: #555;"><i class="weui_icon_success_circle"></i> 添加</a>
 	</div>
 	<script src="/webStatic/js/jquery.min.js"></script>
 	<!-- <script src="../jquery.min.js"></script> -->
