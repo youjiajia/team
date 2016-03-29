@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title></title>
+	<meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=0">
+	<link rel="stylesheet" href="/webStatic/css/weui.min.css"/>
+	<style>
+		div,body,img{
+			margin:0;
+			padding: 0;
+		}
+		a{
+			cursor: pointer;
+			text-decoration: none;
+		}
+		.header{
+			width:98%;
+			height:40px;
+			padding-left:10px;
+			line-height: 40px;
+			background-color:#4682B4;
+			color: #ffffff;
+		}
+		.header a{
+			color: #ffffff;
+		}
+		.afloat{
+			float: left;
+		}
+		.form_div{
+			width: 83%;
+			min-height: 400px;
+			height: auto;
+			margin: 10px;
+			padding: 10px 20px 10px 20px;
+			border-radius:5px; 
+			border: 1px dashed #aaa;
+		}
+		.list{
+			position: relative;
+			min-height: 110px;
+			height: auto;
+			width: 100%;
+			margin-bottom:10px; 
+			background-color: #fff;
+			border-bottom: 1px dashed #aaa;
+		}
+		.list_img{
+			position: relative;
+			height: 50px;
+			width: 50px;
+			border: 1px solid #aaa;
+			border-radius: 50%;
+			margin-right:10px;
+			float: left;
+		}
+		.list_name{
+			position: relative;
+			height: 50px;
+			float: left;
+		}
+		.list_name a{
+			height: 27px;
+			font-size: 14px;
+			color: black;
+			line-height: 27px;
+			margin-bottom: 5px;
+		}
+		.list_name p{
+			height: 23px;
+			/*width: 100%;*/
+			font-size: 12px;
+			color: #aaa;
+			line-height: 23px;
+			margin:0;
+		}
+		.list_info{
+			position: relative;
+			min-height: 100px;
+			height: auto;
+			width: 100%;
+			margin-top: 10px;
+		}
+		.list_info div{
+			font-size: 16px;
+			min-height: 50px;
+			height: auto;
+		}
+		.hearder_title{
+			position: relative;
+			min-height: 40px;
+			height: auto;
+			width: 100%;
+		}
+		.hearder_title p{
+			height: 25px;
+			padding-left: 10px;
+			padding-right: 10px;
+			overflow: hidden;
+			text-overflow: ellipsis;/*加省略号*/
+			white-space: nowrap;/*强制不换行*/
+		}
+		.p_ico{
+			display: inline;
+			height: 25px;
+			width: 100%;
+			margin-left: 10px;
+			overflow: hidden;
+			text-overflow: ellipsis;
+			white-space: nowrap;
+		}
+		.p_ico span{
+			position: relative;
+			height: 20px;
+			font-size: 12px;
+			color: #909090;
+			margin-left: 20px;
+			line-height: 20px;
+		}
+		.form_div > form > div{
+			min-height: 40px;
+			height: auto;
+			line-height: 40px;
+			width: 100%;
+			border: 1px solid #fff;
+		}
+		.form_div > form > div span{
+			color: #555;
+		}
+		.form_div > form > div select{
+			width: 150px;
+			height: 25px;
+			border: 1px solid #eee;
+			border-radius: 5px;
+		}
+		.form_div > form > div input{
+			width: 145px;
+			height: 20px;
+			border: 1px solid #eee;
+			border-radius: 5px;
+		}
+	</style>
+</head>
+<body>
+	<div class="header">
+		<a class="afloat"  href="/bbslist/"><i class="weui_icon_cancel"></i> 返回</a>
+		<!-- <p style="display: inline-block;width: 2px;height: 20px;background-color: #fff;margin: 10px;float: left;"></p> -->
+	</div>
+	<div class="form_div">
+	<div class="list">
+		<div class="list_img">
+			<img src="{{topic.touxiang}}" style="border-radius: 50%;" alt="img" height="50px" width="50px">
+		</div>
+		<div class="list_name">
+			<a href="">{{topic.name}}</a>
+			<p>{{ topic.CreateTime|date:"Y-m-d"|default:'未知日期' }}</p>
+		</div>
+		<br style="clear: both;">
+		<div class="list_info">
+			<div class="hearder_title">{{topic.TopicContent}}</div>
+		</div>
+	</div>
+		<form  method = 'post'  action = 'user_login_submit.action'>
+			<div>
+				<span>评论：</span>
+				<div style="margin:0px;" class="weui_cells weui_cells_form">
+			        <div class="weui_cell">
+			            <div class="weui_cell_bd weui_cell_primary">
+			                <textarea name="area_description" id="area_description" style="width: 97%;" class="weui_textarea" id="memor_content" placeholder="输入评论" rows="10"></textarea>
+			            </div>
+			        </div>
+    			</div>
+    			<a href="#" style="display:block;color:#4682B4;" id="pro_next" onclick="postform();"><i class="weui_icon_success_circle"></i> 提交</a>
+			</div>
+		</form>
+	{% for reply in replys %}
+	<div class="list" style="margin-top: 10px;min-height: 80px;">
+		<div class="list_img">
+			<img src="{{reply.touxiang}}" style="border-radius: 50%;" alt="img" height="50px" width="50px">
+		</div>
+		<div class="list_name">
+			<a href="#">{{reply.name}}</a>
+			<p>{{ reply.CreateTime|date:"Y-m-d"|default:'未知日期' }}</p>
+		</div>
+		<br style="clear: both;">
+		<div class="hearder_title">
+			<p>{{reply.ReplyContent}}</p>
+		</div>
+	</div>
+	{% empty %}赶紧抢沙发吧
+	{% endfor %}
+	</div>
+	<script src="/webStatic/js/jquery.min.js"></script>
+	<!-- <script src="../jquery.min.js"></script> -->
+	<script>
+		function postform(){
+			var pro_description=$("#area_description").val();
+			var jsondata={};
+			jsondata['titleid']={{topic.id}};
+			jsondata['ReplyContent']=pro_description;
+    		$.ajax({
+    			url:"/bbsdetail/",
+    			type:"post",
+    			data:jsondata,
+    			success:function(data){
+    				location.href="/bbslist/";
+    			},
+    			error:function(xhr){
+    				alert("出错"+xhr.responseText);
+    			}
+    		});
+    	}
+	</script>
+</body>
+</html>

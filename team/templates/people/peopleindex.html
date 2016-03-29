@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>平台管理</title>
+	<meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=0">
+	<link rel="stylesheet" href="/webStatic/css/weui.min.css"/>
+	<style>
+		body,div,p,img,ul{
+			margin:0;
+			padding: 0;
+		}
+		a{
+			text-decoration: none;
+		}
+		body{
+			font-family: "Microsoft YaHei";
+		}
+		.header{
+			width:100%;
+			height:40px;
+			padding-left:10px;
+			line-height: 40px;
+			background-color:#92A4A4;
+			color: #ffffff;
+		}
+		.header a{
+			color: #ffffff;
+		}
+		.banner_div{
+			position: relative;
+			min-height: 300px;
+			height:500px;
+			width: 100%;
+			/*background-color: #eee;*/
+		}
+		.ul_list{
+			position: absolute;
+			list-style: none;
+			/*margin-top: 10px;*/
+			width: 100%;
+		}
+		.banner_div p{
+			height: 40px;
+			line-height: 40px; 
+			border-bottom: 1px solid #eee;
+		}
+		.banner_div p a{
+			display: block;
+			width: 100%;
+			padding-left:10px;
+			/*font-size: 16px;*/
+			color: #666;
+		}
+		.banner_div p a:hover{
+			color: #92A4A4;
+		}
+		.banner_div p:hover{
+			/*background-color: #84A35D;*/
+			color: #fff;
+		}
+	</style>
+</head>
+<body>
+	<div class="header">
+		<span>平台管理</span>
+	</div>
+	<div class="banner_div">
+		<!-- <ul class="ul_list"> -->
+			<p><a href="/peopleDepartment/"><i class="weui_icon_circle"></i>&nbsp;&nbsp;&nbsp;&nbsp;部门管理</a></p>
+			<p><a href="/peoplemanage/"><i class="weui_icon_circle"></i>&nbsp;&nbsp;&nbsp;&nbsp;人员管理</a></p>
+			<p><a href="/addmessage/"><i class="weui_icon_circle"></i>&nbsp;&nbsp;&nbsp;&nbsp;消息推送</a></p>
+		</ul>
+	</div>
+</body>
+</html>

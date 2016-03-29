@@ -105,8 +105,8 @@ def bbslist(req):
     #论坛列表页面
     topics=T_Topic.objects.order_by('-CreateTime')
     for topic in topics:
-        setattr(topic,'touxiang',topic.MemberId.jsonreturn['avatar'])
-        setattr(topic,'name',topic.MemberId.jsonreturn['name'])
+        setattr(topic,'touxiang',topic.MemberId.memberinfo['avatar'])
+        setattr(topic,'name',topic.MemberId.memberinfo['name'])
     return render_to_response('bbs/bbslist.html',{'topics':topics})
 def addbbs(req):
     #添加话题
@@ -119,12 +119,12 @@ def addbbs(req):
 def bbsdetail(req):
     if req.method=='GET':
         topic=T_Topic.objects.get(id=req.GET.get('titleid'))
-        setattr(topic,'touxiang',topic.MemberId.jsonreturn['avatar'])
-        setattr(topic,'name',topic.MemberId.jsonreturn['name'])
+        setattr(topic,'touxiang',topic.MemberId.memberinfo['avatar'])
+        setattr(topic,'name',topic.MemberId.memberinfo['name'])
         replys=T_TopicReply.objects.filter(TopicId=topic).order_by('-CreateTime')
         for reply in replys:
-            setattr(reply,'touxiang',reply.MemberId.jsonreturn['avatar'])
-            setattr(reply,'name',reply.MemberId.jsonreturn['name'])
+            setattr(reply,'touxiang',reply.MemberId.memberinfo['avatar'])
+            setattr(reply,'name',reply.MemberId.memberinfo['name'])
         return render_to_response('bbs/bbsdetail.html',{'topic':topic,'replys':replys})
     else:
         member = T_Member.objects.get(UserID=req.COOKIES.get('userid'))
@@ -135,8 +135,8 @@ def votelist(req):
     #投票列表页面
     votes=T_Vote.objects.order_by('-CreateTime')
     for vote in votes:
-        setattr(vote,'touxiang',vote.MemberId.jsonreturn['avatar'])
-        setattr(vote,'name',vote.MemberId.jsonreturn['name'])
+        setattr(vote,'touxiang',vote.MemberId.memberinfo['avatar'])
+        setattr(vote,'name',vote.MemberId.memberinfo['name'])
     return render_to_response('bbs/votelist.html',{'votes':votes})
 def addvote(req):
     #添加投票
@@ -149,8 +149,8 @@ def addvote(req):
 def votedetail(req):
     if req.method=='GET':
         vote=T_Vote.objects.get(id=req.GET.get('voteid'))
-        setattr(vote,'touxiang',vote.MemberId.jsonreturn['avatar'])
-        setattr(vote,'name',vote.MemberId.jsonreturn['name'])
+        setattr(vote,'touxiang',vote.MemberId.memberinfo['avatar'])
+        setattr(vote,'name',vote.MemberId.memberinfo['name'])
         options=T_VoteOptions.objects.filter(VoteId=vote)
         return render_to_response('bbs/votedetail.html',{'vote':vote,'options':options})
     else:
