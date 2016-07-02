@@ -6,10 +6,13 @@ from django.http import HttpResponse, HttpResponseRedirect
 import json
 import urllib
 import urllib2
+import uuid
+import requests
 import StringIO
 import os
 import base64
 import time
+import simplejson
 import uuid
 from datetime import datetime
 from django.db import transaction
@@ -61,6 +64,61 @@ def peopleDepartment(req):
         setattr(newdepartment,'name',dep['name'])
         list.append(newdepartment)
     return render_to_response('people/peopleDepartment.html',{'jsonlist':list})
+def addDepartment(req):
+    #添加部门
+    if req.method=='GET':
+        return render_to_response('people/adddepartment.html')
+    else:
+        departmentname=req.POST.get('departname','')
+        if departmentname!= '':
+            access_token = getToken(sCorpSecret)
+            print access_token
+            jsondata={
+                "name": departmentname,
+                "parentid": "2"
+            }
+            jsondata = simplejson.dumps(jsondata,ensure_ascii=False)
+            req = urllib2.Request('https://qyapi.weixin.qq.com/cgi-bin/department/create?access_token=%s'%(access_token,))
+            resp = urllib2.urlopen(req,jsondata)
+            print resp.read()
+            return HttpResponse("success")
+def addPeople(req):
+    #添加成员
+    if req.method=='GET':
+        jsonlist=getDepartmentList()
+        class department:
+            pass
+        list=[]
+        for dep in jsonlist:
+            newdepartment=department()
+            setattr(newdepartment,'id',dep['id'])
+            setattr(newdepartment,'name',dep['name'])
+            list.append(newdepartment)
+        return render_to_response('people/addpeople.html',{'jsonlist':list})
+    else:
+        peoplename=req.POST.get('name','')
+        partmentid=req.POST.get('partmentid','')
+        weixin=req.POST.get('weixin','')
+        phone=req.POST.get('phone','')
+        mail=req.POST.get('mail','')
+        userid=str(uuid.uuid1())
+        if (weixin!= '')&(peoplename!= '')&(partmentid!= ''):
+            access_token = getToken(sCorpSecret)
+            jsondata={
+                "userid": userid,
+                "name": peoplename,
+                "department": [int(partmentid), ],
+                "position": "",
+                "mobile": phone,
+                "gender": "1",
+                "email": mail,
+                "weixinid": weixin,
+            }
+            jsondata = simplejson.dumps(jsondata,ensure_ascii=False)
+            req = urllib2.Request('https://qyapi.weixin.qq.com/cgi-bin/user/create?access_token=%s'%(access_token,))
+            resp = urllib2.urlopen(req,jsondata)
+            print resp.read()
+            return HttpResponse("success")
 def peoplemanage(req):
     #人员管理
     members=T_Member.objects.all()
@@ -77,16 +135,38 @@ def peoplemanage(req):
         setattr(member,'department',str)
     return render_to_response('people/peoplemanage.html',{'members':members})
 def addmessage(req):
-    jsonlist=getDepartmentList()
-    class department:
-        pass
-    list=[]
-    for dep in jsonlist:
-        newdepartment=department()
-        setattr(newdepartment,'id',dep['id'])
-        setattr(newdepartment,'name',dep['name'])
-        list.append(newdepartment)
-    return render_to_response('people/addmessage.html',{'jsonlist':list})
+    if req.method=='GET':
+        jsonlist=getDepartmentList()
+        class department:
+            pass
+        list=[]
+        for dep in jsonlist:
+            newdepartment=department()
+            setattr(newdepartment,'id',dep['id'])
+            setattr(newdepartment,'name',dep['name'])
+            list.append(newdepartment)
+        return render_to_response('people/addmessage.html',{'jsonlist':list})
+    else:
+        message=req.POST.get('message','')
+        department=req.POST.get('department','')
+        if (message != '') & (department != ''):
+            access_token = getToken(sCorpSecret)
+            jsondata={
+                "touser": "1|2",
+                "toparty": "3",
+                "totag": "",
+                "msgtype": "text",
+                "agentid": 0,
+                "text": {
+                    "content": message
+                },
+                "safe":"0"
+            }
+            jsondata = simplejson.dumps(jsondata,ensure_ascii=False)
+            req = urllib2.Request('https://qyapi.weixin.qq.com/cgi-bin/message/send?access_token=%s'%(access_token,))
+            resp = urllib2.urlopen(req,jsondata)
+            print resp.read()
+            return HttpResponse("success")
 def bbs(req):
     # 畅言论坛
     response = render_to_response('bbs/bbsindex.html')
@@ -115,7 +195,7 @@ def addbbs(req):
     else:
         member = T_Member.objects.get(UserID=req.COOKIES.get('userid'))
         T_Topic.objects.create(MemberId=member,TopicContent=req.POST.get('TopicContent'))
-        return HttpResponseRedirect('/bbslist/')
+        return HttpResponse('ok')
 def bbsdetail(req):
     if req.method=='GET':
         topic=T_Topic.objects.get(id=req.GET.get('titleid'))
@@ -129,8 +209,8 @@ def bbsdetail(req):
     else:
         member = T_Member.objects.get(UserID=req.COOKIES.get('userid'))
         topic=T_Topic.objects.get(id=req.POST.get('titleid'))
-        T_TopicReply.objects.cretae(MemberId=member,TopicId=topic,ReplyContent=req.POST.get('ReplyContent'))
-        return HttpResponseRedirect('/bbsdetail/?titleid='+req.POST.get('titleid'))
+        T_TopicReply.objects.create(MemberId=member,TopicId=topic,ReplyContent=req.POST.get('ReplyContent'))
+        return HttpResponse('ok')
 def votelist(req):
     #投票列表页面
     votes=T_Vote.objects.order_by('-CreateTime')
@@ -144,8 +224,12 @@ def addvote(req):
         return render_to_response('bbs/voteadd.html')
     else:
         member = T_Member.objects.get(UserID=req.COOKIES.get('userid'))
-        T_Vote.objects.create(MemberId=member,VoteContent=req.POST.get('VoteContent'))
-        return HttpResponseRedirect('/votelist/')
+        vote=T_Vote.objects.create(MemberId=member,VoteContent=req.POST.get('TopicContent'))
+        options=req.POST.get('options').split(',')
+        for option in options:
+            if option != '':
+                T_VoteOptions.objects.create(VoteId=vote,OptionContent=option,OptionNum=0)
+        return HttpResponse('ok')
 def votedetail(req):
     if req.method=='GET':
         vote=T_Vote.objects.get(id=req.GET.get('voteid'))
@@ -334,7 +418,7 @@ def projectmem(req):
                     setattr(onemember, 'isheader', '1')
         return render_to_response('project/promember.html', {'id': projectid, 'members': members})
     else:
-        with transaction.commit_on_success():
+        with transaction.atomic():
             projectid = req.POST.get('id')
             T_ProjectMember.objects.filter(
                 ProjectId=T_Project.objects.get(id=projectid)).delete()
@@ -344,9 +428,10 @@ def projectmem(req):
                 isheader = False
                 if memberid in headers:
                     isheader = True
-                T_ProjectMember.objects.create(ProjectId=pro, AdminId=T_Admin.objects.get(MemberId=member, Department_ID=int(
-                    req.POST.get('Department_ID', '1'))), MemberId=T_Member.objects.get(UserID=memberid), isHead=isheader)
-            return HttpResponse('success')
+                if memberid !='':
+                    T_ProjectMember.objects.create(ProjectId=T_Project.objects.get(id=projectid), AdminId=T_Admin.objects.get(Department_ID=int(
+                        req.POST.get('Department_ID', '1'))), MemberId=T_Member.objects.get(id=memberid), isHead=isheader)
+            return HttpResponseRedirect('/projectindex/?id='+req.POST.get('id'))
 
 
 def projectdetail(req):
@@ -393,17 +478,20 @@ def addmodule(req):
     if req.method == 'POST':
         member = T_Member.objects.get(UserID=req.COOKIES.get('userid'))
         project = T_Project.objects.get(id=req.POST.get('id'))
+        project.ProjectStatus="进行中"
+        project.save()
         projectmember = T_ProjectMember.objects.get(
             ProjectId=project, MemberId=member)
-        T_Module.objects.create(ProjectMemberId=projectmember, ProjectId=project, ModuleName=req.POST.get(
+        print T_Module.objects.create(ProjectMemberId=projectmember, ProjectId=project, ModuleName=req.POST.get(
             'ModuleName'), Level=int(req.POST.get('Level')))
-        return HttpResponseRedirect('/moduleindex/?id='+req.POST.get('id')) 
+        return HttpResponseRedirect('/moduleindex/?id='+req.POST.get('id'))
     elif req.method == 'GET':
         return render_to_response('module/moduleadd.html', {'id': req.GET.get('id')})
 
 
 def deletemodule(req):
     # 删除模块
+    print req.GET.get('moduleid')
     module = T_Module.objects.get(id=req.GET.get('moduleid'))
     module.delete()
     return HttpResponseRedirect('/moduleindex/?id='+req.GET.get('id'))
@@ -411,16 +499,18 @@ def deletemodule(req):
 def moduledetail(req):
     # 模块详情页
     if req.method == 'GET':
-        print req.GET.get('id')
         member = T_Member.objects.get(UserID=req.COOKIES.get('userid'))
         project = T_Project.objects.get(id=req.GET.get('id'))
         module = T_Module.objects.get(id=req.GET.get('moduleid'))
+        ischange='1'
+        if T_Demand.objects.filter(ModuleId=module).count()>0:
+            ischange='0'
         projectmember = T_ProjectMember.objects.get(
             ProjectId=project, MemberId=member)
         if ((T_Admin.objects.filter(MemberId=member, Department_ID=T_Project.objects.get(id=req.GET.get('id')).Department_ID).count() != 0) | projectmember.isHead) & (T_Demand.objects.filter(ModuleId=module).count() == 0):
-            return render_to_response('module/moduledetail.html', {'module': module, 'isheader': '1','id':req.GET.get('id')})
+            return render_to_response('module/moduledetail.html', {'module': module, 'isheader': '1','ischange': ischange,'id':req.GET.get('id')})
         else:
-            return render_to_response('module/moduledetail.html', {'module': module, 'isheader': '0'})
+            return render_to_response('module/moduledetail.html', {'module': module, 'isheader': '0','ischange': ischange,'id':req.GET.get('id')})
     else:
         module = T_Module.objects.get(id=req.POST.get('moduleid'))
         if T_Demand.objects.filter(ModuleId=module).count() == 0:
@@ -476,7 +566,7 @@ def demanddetail(req):
         projectmember = T_ProjectMember.objects.get(
             ProjectId=project, MemberId=member)
         demand = T_Demand.objects.get(id=req.GET.get('demandid'))
-        if projectmember.isHead:
+        if demand.DemandStatus=="未分配":
             return render_to_response('demand/demanddetail.html', {'demand': demand, 'isheader': '1', 'modules': modules, "id": req.GET.get('id')})
         else:
             return render_to_response('demand/demanddetail.html', {'demand': demand, 'isheader': '0', 'modules': modules, "id": req.GET.get('id')})
@@ -522,7 +612,7 @@ def adddocument(req):
         with open(path, 'wb+') as destination:
             destination.write(reqfile)
         T_Document.objects.create(ProjectMemberId=projectmember, ProjectId=project,
-                                  DocumentName=req.META.get('HTTP_DOCUMENTNAME'), DocumentUrl=path)
+                                  DocumentName=req.META.get('HTTP_DOCUMENTNAME'), DocumentUrl='/webStatic/upload/'+name+req.META.get('HTTP_FILENAME'))
         return HttpResponseRedirect('/documentlist/?id=' + req.META.get('HTTP_ID'))
 
 
@@ -553,7 +643,7 @@ def documentdetail(req):
         document = T_Document.objects.get(id=req.META.get('HTTP_DOCUMENTID'))
         document.ProjectMemberId = projectmembers
         document.DocumentName = req.META.get('HTTP_DOCUMENTNAME')
-        document.DocumentUrl = path
+        document.DocumentUrl = '/webStatic/upload/'+name+req.META.get('HTTP_FILENAME')
         document.save()
         return HttpResponseRedirect('/documentlist/?id=' + req.META.get('HTTP_ID'))
 
@@ -583,7 +673,7 @@ def testdetail(req):
         modules = T_Module.objects.filter(ProjectId=project)
         promember = T_ProjectMember.objects.get(
             ProjectId=project, MemberId=member)
-        if (promember.isHead) & (test.TestStatus != '已完成'):
+        if test.TestStatus == "未开始":
             return render_to_response('test/testdetail.html', {'modules': modules, 'test': test, 'isheader': '1', "id": req.GET.get('id')})
         else:
             return render_to_response('test/testdetail.html', {'modules': modules, 'test': test, 'isheader': '0', "id": req.GET.get('id')})
@@ -693,9 +783,12 @@ def bugdetail(req):
         bug.BugTitle = req.POST.get('BugTitle')
         bug.BugContent = req.POST.get('BugContent')
         bug.save()
+        if bug.TestId != None:
+            bug.TestId.TestStatus='进行中'
+            bug.TestId.save()
         T_DemandBugLog.objects.create(
             ProjectMemberId=projectmember, BugId=bug, LogContent='更新BUG')
-        return HttpResponseRedirect('/bug/?id=' + req.POST.get('id'))
+        return HttpResponse('ok')
 
 def assignlist(req):
     #任务列表
@@ -737,15 +830,17 @@ def addassign(req):
             demand=T_Demand.objects.get(id=req.POST.get('demandid'))
         if req.POST.get('bugid','')!='':
             bug=T_Bug.objects.get(id=req.POST.get('bugid'))
-       # with transaction.commit_on_success():
-        if True:
+        with transaction.atomic():
             for member in members:
-                print member
-                print type(member)
-                print len(member)
-                if member !=u'' & member !=None:
+                if demand != None:
+                    demand.DemandStatus='进行中'
+                    demand.save()
+                if bug != None:
+                    bug.BugStatus='进行中'
+                    bug.save()
+                if (member !=u'') & (member !=None):
                     T_DemandAssigned.objects.create(DemandId=demand,BugId=bug,ProjectMemberId=T_ProjectMember.objects.get(id=member))
-        return HttpResponseRedirect('/assignlist/?id=' + req.POST.get('id'))
+        return HttpResponse('ok')
 
 def assigndetail(req):
     if req.method=='GET':
@@ -764,8 +859,7 @@ def assigndetail(req):
             return render_to_response('assign/assigndetail.html',{'type':'demand','assign':assign,'logs':logs,'id': req.GET.get('id')})
     else:
         if req.POST.get('type')=='bug':
-           # with transaction.commit_on_success():
-            if True:
+            with transaction.atomic():
                 member = T_Member.objects.get(UserID=req.COOKIES.get('userid'))
                 project = T_Project.objects.get(id=req.POST.get('id'))
                 promember = T_ProjectMember.objects.get(ProjectId=project, MemberId=member)
@@ -773,9 +867,9 @@ def assigndetail(req):
                 T_DemandBugLog.objects.create(ProjectMemberId=promember,BugId=assign.BugId,LogContent=req.POST.get('LogContent'))
                 assign.BugId.BugStatus=req.POST.get('status')
                 assign.BugId.save()
-                return HttpResponseRedirect('/assignlist/?id=' + req.POST.get('id'))
+                return HttpResponse('ok')
         else:
-            with transaction.commit_on_success():
+            with transaction.atomic():
                 member = T_Member.objects.get(UserID=req.COOKIES.get('userid'))
                 project = T_Project.objects.get(id=req.POST.get('id'))
                 promember = T_ProjectMember.objects.get(ProjectId=project, MemberId=member)
@@ -783,7 +877,7 @@ def assigndetail(req):
                 T_DemandBugLog.objects.create(ProjectMemberId=promember,DemandId=assign.DemandId,LogContent=req.POST.get('LogContent'))
                 assign.DemandId.DemandStatus=req.POST.get('status')
                 assign.DemandId.save()
-                return HttpResponseRedirect('/assignlist/?id=' + req.POST.get('id'))
+                return HttpResponse('ok')
 
 def loglist(req):
     logs=T_Log.objects.all()

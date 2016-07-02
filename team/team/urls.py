@@ -19,6 +19,8 @@ urlpatterns = [
       url(r'^peopleDepartment/$',peopleDepartment),
       url(r'^peoplemanage/$',peoplemanage),
       url(r'^addmessage/$',addmessage),
+      url(r'^addDepartment/$',addDepartment),
+      url(r'^addPeople/$',addPeople),
         #项目管理
       url(r'^project/$',project),
       url(r'^projectindex/$',projectindex),
@@ -43,6 +45,7 @@ urlpatterns = [
       url(r'^addtest/$',addtest),
       url(r'^buglist/$',buglist),
       url(r'^bugadd/$',bugadd),
+      url(r'^bugadd2/$',bugdetail),
       url(r'^bugdelete/$',bugdelete),
       url(r'^bugdetail/$',bugdetail),
       url(r'^assignlist/$',assignlist),

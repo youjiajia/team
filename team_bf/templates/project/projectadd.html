@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title></title>
+	<meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=0">
+	<link rel="stylesheet" href="/webStatic/css/weui.min.css"/>
+	<style>
+		div,body,img{
+			margin:0;
+			padding: 0;
+		}
+		a{
+			cursor: pointer;
+			text-decoration: none;
+		}
+		.header{
+			width:98%;
+			height:40px;
+			padding-left:10px;
+			line-height: 40px;
+			background-color:#84A35D;
+			color: #ffffff;
+		}
+		.header a{
+			color: #ffffff;
+		}
+		.afloat{
+			float: left;
+		}
+		.form_div{
+			width: 83%;
+			min-height: 400px;
+			height: auto;
+			margin: 10px;
+			padding: 10px 20px 10px 20px;
+			border-radius:5px; 
+			border: 1px dashed #aaa;
+		}
+		.form_div > form > div{
+			min-height: 40px;
+			height: auto;
+			line-height: 40px;
+			width: 100%;
+			border: 1px solid #fff;
+		}
+		.form_div > form > div span{
+			color: #555;
+		}
+		.form_div > form > div select{
+			width: 150px;
+			height: 25px;
+			border: 1px solid #eee;
+			border-radius: 5px;
+		}
+		.form_div > form > div input{
+			width: 145px;
+			height: 20px;
+			border: 1px solid #eee;
+			border-radius: 5px;
+		}
+	</style>
+</head>
+<body>
+	<div class="header">
+		<a class="afloat" href="/project/"><i class="weui_icon_cancel"></i> 返回</a>
+		<p style="display: inline-block;width: 2px;height: 20px;background-color: #fff;margin: 10px;float: left;"></p>
+		<a href="" onclick="postform();"><i class="weui_icon_success_circle"></i> 下一步</a>
+	</div>
+	<div class="form_div">
+		<form  method = 'post'  action = 'user_login_submit.action'>
+			<div>
+				<span>部门：</span>
+				<select name="sel_department" id="sel_department">
+					<option value="1">华北理工大学教务处</option>
+					<option value="2">以升创新实验中心</option>
+					<option value="3">智慧应用软件工作室</option>
+					<option value="4">demo</option>
+				</select>
+			</div>
+			<div>
+				<span>名称：</span>
+				<input type="text" name="inp_name" id="inp_name">
+			</div>
+			<div>
+				<span>描述：</span>
+				<div class="weui_cells weui_cells_form">
+			        <div class="weui_cell">
+			            <div class="weui_cell_bd weui_cell_primary">
+			                <textarea name="area_description" id="area_description" style="width: 97%;" class="weui_textarea" id="memor_content" placeholder="输入文字" rows="10"></textarea>
+			            </div>
+			        </div>
+    			</div>
+			</div>
+			<div>
+				<span>状态：</span>
+				<select name="sel_status" id="sel_status">
+					<option value="未开始">未开始</option>
+					<option value="进行中">进行中</option>
+					<option value="已完成">已完成</option>
+				</select>
+			</div>
+		</form>
+	</div>
+	<script src="/webStatic/js/jquery.min.js"></script>
+	<!-- <script src="../jquery.min.js"></script> -->
+	<script>
+		function postform(){
+			var pro_department=$("#sel_department").val();
+			var pro_name=$("#inp_name").val();
+			var pro_description=$("#area_description").val();
+			var pro_status=$("#sel_status").val();
+			var jsondata={};
+			jsondata['Department_ID']=pro_department;
+			jsondata['ProjectName']=pro_name;
+			jsondata['ProjectDescribe']=pro_description;
+			jsondata['ProjectStatus']=pro_status;
+			$.ajaxSetup({ 
+				async : false 
+			}); 
+    		$.ajax({
+    			url:"/projectadd/",
+    			type:"post",
+    			data:jsondata,
+    			success:function(data){
+    				location.href="/projectmem/?id="+data;
+    			},
+    			error:function(xhr){
+    				alert("出错"+xhr.responseText);
+    			}
+    		});
+    	}
+	</script>
+</body>
+</html>

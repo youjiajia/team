@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title></title>
+	<meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=0">
+	<link rel="stylesheet" href="/webStatic/css/weui.min.css"/>
+	<link rel="stylesheet" href="../../webStatic/css/weui.min.css"/>
+	<style>
+		div,body,img{
+			margin:0;
+			padding: 0;
+		}
+		a{
+			cursor: pointer;
+			text-decoration: none;
+		}
+		.header{
+			width:98%;
+			height:40px;
+			padding-left:10px;
+			line-height: 40px;
+			background-color:#4682B4;
+			color: #ffffff;
+		}
+		.header a{
+			color: #ffffff;
+		}
+		.afloat{
+			float: left;
+		}
+		.form_div{
+			width: 83%;
+			min-height: 400px;
+			height: auto;
+			margin: 10px;
+			padding: 10px 20px 10px 20px;
+			border-radius:5px; 
+			border: 1px dashed #aaa;
+		}
+		.list{
+			position: relative;
+			min-height: 110px;
+			height: auto;
+			width: 100%;
+			margin-bottom:10px; 
+			background-color: #fff;
+			border-bottom: 1px dashed #aaa;
+		}
+		.list_img{
+			position: relative;
+			height: 50px;
+			width: 50px;
+			border: 1px solid #aaa;
+			border-radius: 50%;
+			margin-right:10px;
+			float: left;
+		}
+		.list_name{
+			position: relative;
+			height: 50px;
+			float: left;
+		}
+		.list_name a{
+			height: 27px;
+			font-size: 14px;
+			color: black;
+			line-height: 27px;
+			margin-bottom: 5px;
+		}
+		.list_name p{
+			height: 23px;
+			/*width: 100%;*/
+			font-size: 12px;
+			color: #aaa;
+			line-height: 23px;
+			margin:0;
+		}
+		.list_info{
+			position: relative;
+			min-height: 100px;
+			height: auto;
+			width: 100%;
+			margin-top: 10px;
+		}
+		.list_info div{
+			font-size: 16px;
+			min-height: 50px;
+			height: auto;
+		}
+		.hearder_title{
+			position: relative;
+			min-height: 40px;
+			height: auto;
+			width: 100%;
+		}
+		.form_div > form > div{
+			min-height: 40px;
+			height: auto;
+			line-height: 40px;
+			width: 100%;
+			border: 1px solid #fff;
+		}
+		.form_div > form > div span{
+			color: #555;
+		}
+		.inp_text{
+			border:1px solid #aaa;
+			border-radius: 5px;
+			margin-left: 10px;
+			width: 150px;
+			height: 20px;
+		}
+	</style>
+</head>
+<body>
+	<div class="header">
+		<a class="afloat" href="/votelist/"><i class="weui_icon_cancel"></i> 返回</a>
+	</div>
+	<div class="form_div">
+		<div class="list">
+		<div class="list_img">
+			<img src="{{vote.touxiang}}" style="border-radius: 50%;" alt="img" height="50px" width="50px">
+		</div>
+		<div class="list_name">
+			<a href="">{{vote.name}}</a>
+			<p>{{ vote.CreateTime|date:"Y-m-d"|default:'未知日期' }}</p>
+		</div>
+		<br style="clear: both;">
+		<div class="list_info">
+			<div class="hearder_title">{{vote.VoteContent}}</div>
+		</div>
+		</div>
+		<div class="div_check">
+		{% for option in options %}
+		<div class='div_addcheck'><input type='checkbox'><input class='inp_text' type='text'  value='{{option.OptionContent}}'><span>票数：{{option.OptionNum}}</span></div>
+		{% empty %}暂无论贴
+		{% endfor %}
+		</div>
+		</form>
+	</div>
+	<script src="/webStatic/js/jquery.min.js"></script>
+	<script src="../../webStatic/js/jquery.min.js"></script>
+	<script>
+		$(function(){
+			str="<div class='div_addcheck'><input type='checkbox'><input class='inp_text' type='text'  value=''><a class='del_check' href='#' onclick='delcheck(this);'><i class='weui_icon_cancel'></i></a></div>";
+			$("#but_add").click(function(){
+				$(".div_check").append(str);
+			})
+		})
+		function delcheck(thisdel){
+			$(thisdel).parent("div").remove();
+		}
+		function postform(){
+			var pro_description=$("#area_description").val();
+			var jsondata={};
+			jsondata['TopicContent']=pro_description;
+    		$.ajax({
+    			url:"/addvote/",
+    			type:"post",
+    			data:jsondata,
+    			success:function(data){
+    				location.href="/bbslist/";
+    			},
+    			error:function(xhr){
+    				alert("出错"+xhr.responseText);
+    			}
+    		});
+    	}
+	</script>
+</body>
+</html>

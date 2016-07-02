@@ -1,0 +1,174 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title></title>
+	<meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=0">
+	<link rel="stylesheet" href="/webStatic/css/weui.min.css"/>
+	<style>
+		body{
+			font-family: "Microsoft YaHei";
+		}
+		body,div,p,img,ul{
+			margin:0;
+			padding: 0;
+		}
+		a{
+			text-decoration: none;
+		}
+		.header{
+			width:100%;
+			height:40px;
+			padding-left:10px;
+			padding-right: 20px;
+			line-height: 40px;
+			background-color:#92A4A4;
+			color: #ffffff;
+			text-align: right;
+		}
+		.header a{
+			color: #ffffff;
+		}
+		.afloat{
+			float: left;
+		}
+		.div_add_but{
+			float: right;
+		    position: relative;
+		    margin-top: 5px;
+		    margin-right: 20px;
+		    width: 25px;
+		    height: 25px;
+		    border: 1px solid #ffffff;
+		    border-radius: 50%;
+		}
+		.div_add_but::before{
+			width: 2px;
+    		height: 18px;
+		}
+		.div_add_but::after{
+			width: 18px;
+    		height: 2px;
+		}
+		.div_add_but::before,.div_add_but::after{
+			content: " ";
+		    position: absolute;
+		    top: 50%;
+		    left: 50%;
+		    -webkit-transform: translate(-50%, -50%);
+		    transform: translate(-50%, -50%);
+		    background-color: #ffffff;
+		}
+		.input_add_but{
+			cursor: pointer;
+			position: absolute;
+		    z-index: 1;
+		    top: 0;
+		    left: 0;
+		    width: 100%;
+		    height: 100%;
+		    opacity: 0;
+		}
+		.pro_list{
+			height: 50px;
+			width: 100%;
+			/*border-bottom:1px dashed #aaa;*/
+			margin:10px auto 10px auto;
+		}
+		.pro_list span{
+			display: inline-block;
+			margin:0;
+			padding-left: 10px;
+			padding-right:10px;
+			height: 30px;
+			line-height: 35px;
+			color: rgba(0,0,0,0.6);
+		}
+		.pro_list p{
+			margin:0;
+			padding-left: 10px;
+			padding-right:10px; 
+			height: 30px;
+			line-height: 35px;
+			color: rgba(0,0,0,1);
+			overflow: hidden;
+			text-overflow: ellipsis;/*加省略号*/
+			white-space: nowrap;/*强制不换行*/
+		}
+		.pro_list input,select{
+			width: 180px;
+			height: 30px;
+			border: 1px solid #eee;
+			border-radius: 5px;
+		}
+
+	</style>
+</head>
+<body>
+	<input type="hidden" id="level_hidden" value="{{level}}">
+	<div class="header">
+		<a class="afloat" href="/people/"><i class="weui_icon_cancel"></i> 返回</a>
+		<p style="display: inline-block;width: 2px;height: 20px;background-color: #fff;margin: 10px;float: left;"></p>
+		<a href="#" class="afloat" id="pro_next" onclick="postPeople();"><i class="weui_icon_success_circle"></i> 提交</a>
+		<span style="margin-right: 20px;">添加人员</span>
+	</div>
+	
+	<div class="pro_list">
+		<span>选择部门：</span>
+		<select name="sel_department" id="sel_department">{% for department in jsonlist %}
+			<option value="{{department.id}}">{{department.name}}</option>
+		{% empty %}暂无部门
+		{% endfor %}
+		</select>
+	</div>
+	<div class="pro_list">
+		<span>人员名称：</span>
+		<input type="text" id="peopleName" >
+	</div>
+	
+	<div class="pro_list">
+		<span>人员微信：</span>
+		<input type="text" id="peopleWeixin" >
+	</div>
+	<div class="pro_list">
+		<span>人员手机号：</span>
+		<input type="text" id="peoplePhone" >
+	</div>
+	<div class="pro_list">
+		<span>人员邮箱：</span>
+		<input type="text" id="peopleMail" >
+	</div>
+	<script src="/webStatic/js/jquery.min.js"></script>
+	<script>
+		$(function(){
+			var level=$("#level_hidden").val();
+			$(".div_add_but").hide();
+			if(level=="admin"){
+				$(".div_add_but").show();
+			}else{
+				$(".div_add_but").hide();
+			}
+		})
+		function postPeople(){
+    		var name=$("#peopleName").val();
+    		var partmentid=$("#sel_department").val();
+    		var weixin=$("#peopleWeixin").val();
+    		var phone=$("#peoplePhone").val();
+    		var mail=$("#peopleMail").val();
+    		console.log(name+";"+partmentid);
+    		$.ajax({
+    			url:"/addPeople/",
+    			type:"post",
+    			data:{'name':name,'partmentid':partmentid,'weixin':weixin,'phone':phone,'mail':mail},
+    			success:function(data){
+    				location.href="/peoplemanage/";
+    			},
+    			error:function(xhr){
+    				alert("出错"+xhr.responseText);
+    			}
+    		});
+    	}
+	</script>
+</body>
+</html>

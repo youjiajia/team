@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=0">
+	<link rel="stylesheet" href="/webStatic/css/weui.min.css"/>
+	<link rel="stylesheet" href="weui.min.css"/>
+	<title></title>
+	<style>
+		div,body,img{
+			margin:0;
+			padding: 0;
+		}
+		a{
+			cursor: pointer;
+			text-decoration: none;
+		}
+		.header{
+			width:100%;
+			height:40px;
+			padding-left:10px;
+			line-height: 40px;
+			background-color:rgba(0,0,0,0.1);
+			color: rgba(0,0,0,0.8);
+		}
+		.header a{
+			color: rgba(0,0,0,0.8);
+		}
+		.afloat{
+			float: left;
+		}
+
+		.weui_cell_primary{
+			height: auto;
+		}
+		.weui_cells_form{
+			margin:0px;
+			padding: 0px;
+		}
+		.adelete{
+			display: inline-block;
+			height: 27px;
+			width: 27px; 
+			background-image: url(/webStatic/image/delete.png);
+			float: right;
+			margin: 6px 15px 5px 10px;
+		}
+	</style>
+</head>
+<body>
+	<div class="header">
+		<a class="afloat" href="/memo/"><i class="weui_icon_cancel"></i> 取消</a>
+		<p style="display: inline-block;width: 2px;height: 20px;background-color: #999;margin: 10px;float: left;"></p>
+		<a href="#" onclick="postMenor()"><i class="weui_icon_success_circle"></i> 完成</a>
+		<a href="#"></a>
+	</div>
+	<div class="weui_cells weui_cells_form">
+        <div class="weui_cell">
+            <div class="weui_cell_bd weui_cell_primary">
+                <textarea style="background-image: url(/webStatic/image/1.jpg);line-height: 40px;" class="weui_textarea" id="memor_content" placeholder="输入文字" rows="12"></textarea>
+            </div>
+        </div>
+    </div>
+    <script src="/webStatic/js/jquery.min.js"></script>
+    <script>
+    	function postMenor(){
+    		var content=$("#memor_content").val();
+    		alert(content);
+    		$.ajax({
+    			url:"/addmemo/",
+    			type:"post",
+    			data:{'content':content},
+    			success:function(data){
+    				if(data==1){
+    					location.href="/memo/";
+    				}
+    			},
+    			error:function(xhr){
+    				alert("出错"+xhr.responseText);
+    			}
+    		});
+    	}
+    </script>
+</body>
+</html>

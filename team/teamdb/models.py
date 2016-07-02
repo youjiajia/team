@@ -26,7 +26,7 @@ class T_Member(models.Model):
         userinformation = userinforeponse.read()
         jsonuserinfo=json.loads(userinformation)
         return jsonuserinfo
-    
+
 
     def __str__(self):
         return self.memberinfo['name']

@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title></title>
+	<meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=0">
+	<link rel="stylesheet" href="/webStatic/css/weui.min.css"/>
+	<link rel="stylesheet" href="../../webStatic/css/weui.min.css"/>
+	<style>
+		div,body,img{
+			margin:0;
+			padding: 0;
+		}
+		a{
+			cursor: pointer;
+			text-decoration: none;
+		}
+		.header{
+			width:98%;
+			height:40px;
+			padding-left:10px;
+			line-height: 40px;
+			background-color:#4682B4;
+			color: #ffffff;
+		}
+		.header a{
+			color: #ffffff;
+		}
+		.afloat{
+			float: left;
+		}
+		.form_div{
+			width: 83%;
+			min-height: 400px;
+			height: auto;
+			margin: 10px;
+			padding: 10px 20px 10px 20px;
+			border-radius:5px; 
+			border: 1px dashed #aaa;
+		}
+		.form_div > form > div{
+			min-height: 40px;
+			height: auto;
+			line-height: 40px;
+			width: 100%;
+			border: 1px solid #fff;
+		}
+		.form_div > form > div span{
+			color: #555;
+		}
+		.inp_text{
+			border:1px solid #aaa;
+			border-radius: 5px;
+			margin-left: 10px;
+			width: 150px;
+			height: 20px;
+		}
+	</style>
+</head>
+<body>
+	<div class="header">
+		<a class="afloat" href="/votelist/"><i class="weui_icon_cancel"></i> 返回</a>
+		<p style="display: inline-block;width: 2px;height: 20px;background-color: #fff;margin: 10px;float: left;"></p>
+		<a href="#" id="pro_next" onclick="postform();"><i class="weui_icon_success_circle"></i> 提交</a>
+		<!-- <a href="#" id="delete_pro" style="color: #DD574B;float: right;margin-right: 10px;">删除</a> -->
+		<input type="hidden" id="hidden_change" value="{{change}}">
+	</div>
+	<div class="form_div">
+		<form  method = 'post'  action = 'user_login_submit.action'>
+			<div>
+				<span>描述：</span>
+				<div class="weui_cells weui_cells_form">
+			        <div class="weui_cell">
+			            <div class="weui_cell_bd weui_cell_primary">
+			                <textarea name="area_description" id="area_description" style="width: 97%;" class="weui_textarea" id="memor_content" placeholder="输入文字" rows="10"></textarea>
+			            </div>
+			        </div>
+    			</div>
+			</div>
+			<div class="div_check">
+				<input type="button" id="but_add" style="border:0;height: 25px;width: 90px;background-color: #4682B4;color: #fff;border-radius: 5px;" value="添加选项">
+				
+			</div>
+		</form>
+	</div>
+	<script src="/webStatic/js/jquery.min.js"></script>
+	<script src="../../webStatic/js/jquery.min.js"></script>
+	<script>
+		$(function(){
+			str="<div class='div_addcheck'><input type='checkbox'><input class='inp_text' type='text'  value=''><a class='del_check' href='#' onclick='delcheck(this);'><i class='weui_icon_cancel'></i></a></div>";
+			$("#but_add").click(function(){
+				$(".div_check").append(str);
+			})
+		})
+		function delcheck(thisdel){
+			$(thisdel).parent("div").remove();
+		}
+		function postform(){
+			var pro_description=$("#area_description").val();
+            var optionstr="";
+            alert($(".inp_text").length);
+            for(var i=0;i<$(".inp_text").length;i++){
+                optionstr += $(".inp_text")[i].val();
+                optionstr += ",";
+            }
+            alert(optionstr);
+			var jsondata={};
+			jsondata['TopicContent']=pro_description;
+			jsondata['options']=optionstr;
+    		$.ajax({
+    			url:"/addvote/",
+    			type:"post",
+    			data:jsondata,
+    			success:function(data){
+    				location.href="/bbslist/";
+    			},
+    			error:function(xhr){
+    				alert("出错"+xhr.responseText);
+    			}
+    		});
+    	}
+	</script>
+</body>
+</html>

@@ -97,14 +97,20 @@
 		}
 		function postform(){
 			var pro_description=$("#area_description").val();
+            var optionstr="";
+            for(var i=0;i<$(".inp_text").length;i++){
+                optionstr += $(".inp_text")[i].value;
+                optionstr += ",";
+            }
 			var jsondata={};
 			jsondata['TopicContent']=pro_description;
+			jsondata['options']=optionstr;
     		$.ajax({
     			url:"/addvote/",
     			type:"post",
     			data:jsondata,
     			success:function(data){
-    				location.href="/bbslist/";
+    				location.href="/votelist/";
     			},
     			error:function(xhr){
     				alert("出错"+xhr.responseText);

@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title></title>
+	<meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=0">
+	<link rel="stylesheet" href="/webStatic/css/weui.min.css"/>
+	<style>
+		div,body,img{
+			margin:0;
+			padding: 0;
+		}
+		a{
+			cursor: pointer;
+			text-decoration: none;
+		}
+		.header{
+			width:98%;
+			height:40px;
+			padding-left:10px;
+			line-height: 40px;
+			background-color:#84A35D;
+			color: #ffffff;
+		}
+		.header a{
+			color: #ffffff;
+		}
+		.afloat{
+			float: left;
+		}
+		.form_div{
+			width: 83%;
+			min-height: 400px;
+			height: auto;
+			margin: 10px;
+			padding: 10px 20px 10px 20px;
+			border-radius:5px; 
+			border: 1px dashed #aaa;
+		}
+		.form_div > form > div{
+			min-height: 40px;
+			height: auto;
+			line-height: 40px;
+			width: 100%;
+			border: 1px solid #fff;
+		}
+		.form_div > form > div span{
+			color: #555;
+		}
+		.form_div > form > div select{
+			width: 150px;
+			height: 25px;
+			border: 1px solid #eee;
+			border-radius: 5px;
+		}
+		.form_div > form > div input{
+			width: 145px;
+			height: 20px;
+			border: 1px solid #eee;
+			border-radius: 5px;
+		}
+	</style>
+</head>
+<body>
+	<div class="header">
+		<a class="afloat" href="/demandlist/?id={{id}}"><i class="weui_icon_cancel"></i> 返回</a>
+		<p style="display: inline-block;width: 2px;height: 20px;background-color: #fff;margin: 10px;float: left;"></p>
+		<a href="#" id="pro_next" onclick="postform();"><i class="weui_icon_success_circle"></i> 修改</a>
+		<a href="/demanddelete/?id={{id}}&demandid={{demand.id}}" id="delete_pro" style="color: #DD574B;float: right;margin-right: 10px;">删除</a>
+		<input type="hidden" id="hidden_change" value="{{isheader}}">
+	</div>
+	<div class="form_div">
+		<form  method = 'post'  action = 'user_login_submit.action'>
+			<div>
+				<span>&nbsp;&nbsp;需求名称：</span>
+				<input type="text" name="inp_name" id="inp_name">
+			</div>
+			<div>
+				<span>&nbsp;&nbsp;所属模块：</span>
+				<select name="sel_module" id="sel_module">
+				{% for module in modules %}
+					<option value="{{module.id}}">{{module.ModuleName}}</option>
+				{% empty %}暂无模块
+    			{% endfor %}
+				</select>
+			</div>
+			<div>
+				<span>&nbsp;&nbsp;需求描述：</span>
+				<div class="weui_cells weui_cells_form">
+			        <div class="weui_cell">
+			            <div class="weui_cell_bd weui_cell_primary">
+			                <textarea name="area_description" id="area_description" style="width: 200px;" class="weui_textarea" id="memor_content" placeholder="输入文字" rows="10"></textarea>
+			            </div>
+			        </div>
+    			</div>
+			</div>
+			<div>
+				<span>需求优先级：</span>
+				<select name="sel_level" id="sel_level">
+					<option value="1">1</option>
+					<option value="2">2</option>
+					<option value="3">3</option>
+					<option value="4">4</option>
+				</select>
+			</div>
+			<div>
+				<span>&nbsp;&nbsp;需求状态：</span>
+				<select name="sel_status" id="sel_status">
+					<option value="未分配">未分配</option>
+					<option value="进行中">进行中</option>
+					<option value="已完成">已完成</option>
+				</select>
+			</div>
+		</form>
+	</div>
+	<script src="/webStatic/js/jquery.min.js"></script>
+	<!-- <script src="../jquery.min.js"></script> -->
+	<script>
+		$(function(){
+			$("#delete_pro").hide();
+			$("#pro_next").hide();
+			$("#inp_name").val('{{demand.DemandName}}');
+			$("#sel_module").val('{{demand.ModuleId.id}}');
+			$("#sel_level").val('{{demand.Level}}');
+			$("#area_description").val('{{demand.DemandDescribe}}');
+			$("#sel_status").val('{{demand.DemandStatus}}');
+			var change=$("#hidden_change").val();
+			if(change=="1"){
+				$("#delete_pro").show();
+				$("#pro_next").show();
+			}else{
+				$("#delete_pro").hide();
+				$("#pro_next").hide();
+			}	
+		})
+		function postform(){
+			var pro_id={{id}};
+			var demand_id={{demand.id}};
+			var demand_name=$("#inp_name").val();
+			var demand_module=$("#sel_module").val();
+			var demand_level=$("#sel_level").val();
+			var demand_discrip=$("#area_description").val();
+			var demand_status=$("#sel_status").val();
+			var jsondata={};
+			jsondata['id']=pro_id;
+			jsondata['demandid']=demand_id;
+			jsondata['meduleid']=demand_module;
+			jsondata['DemandName']=demand_name;
+			jsondata['DemandDescribe']=demand_discrip;
+			jsondata['DemandStatus']=demand_status
+			jsondata['Level']=demand_level;
+			$.ajaxSetup({ 
+				async : false 
+			}); 
+    		$.ajax({
+    			url:"/demanddetail/",
+    			type:"post",
+    			data:jsondata,
+    			success:function(data){
+    				location.href="/demandlist/?id="+pro_id;	
+    			},
+    			error:function(xhr){
+    				alert("出错"+xhr.responseText);
+    			}
+    		});
+    	}
+	</script>
+</body>
+</html>
